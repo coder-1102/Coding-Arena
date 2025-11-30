@@ -61,31 +61,33 @@ export default function QuestionCard({ question, categoryId, solved }) {
         }}
         onClick={handleClick}
       >
-        <CardContent sx={{ p: 3, position: 'relative', zIndex: 1 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <Box sx={{ flex: 1 }}>
+        <CardContent sx={{ p: 4, position: 'relative', zIndex: 1 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
+            <Box sx={{ flex: 1, pr: 2 }}>
               <Typography 
-                variant="h6" 
+                variant="h5" 
                 component="h3" 
                 sx={{ 
-                  mb: 1.5, 
-                  color: solved ? '#4F8BFF' : 'rgba(255, 255, 255, 0.9)',
+                  mb: 2, 
+                  color: solved ? '#4F8BFF' : 'rgba(255, 255, 255, 0.95)',
                   fontWeight: 700,
-                  textShadow: solved ? '0 0 15px rgba(79, 139, 255, 0.3)' : 'none',
-                  letterSpacing: '0.3px',
+                  textShadow: solved ? '0 0 20px rgba(79, 139, 255, 0.4)' : 'none',
+                  letterSpacing: '0.5px',
+                  fontSize: '1.5rem',
                 }}
               >
                 {question.title}
               </Typography>
               <Typography 
-                variant="body2" 
+                variant="body1" 
                 sx={{ 
-                  mb: 2.5,
-                  color: 'rgba(255, 255, 255, 0.65)',
-                  lineHeight: 1.6,
+                  mb: 3,
+                  color: 'rgba(255, 255, 255, 0.75)',
+                  lineHeight: 1.8,
+                  fontSize: '1rem',
                 }}
               >
-                {question.description.substring(0, 100)}...
+                {question.description.substring(0, 150)}...
               </Typography>
             </Box>
             {solved && (
@@ -93,31 +95,44 @@ export default function QuestionCard({ question, categoryId, solved }) {
                 sx={{ 
                   color: '#4F8BFF', 
                   ml: 2,
-                  fontSize: 32,
-                  filter: 'drop-shadow(0 0 8px rgba(79, 139, 255, 0.6))',
+                  fontSize: 36,
+                  filter: 'drop-shadow(0 0 12px rgba(79, 139, 255, 0.8))',
+                  flexShrink: 0,
                 }} 
               />
             )}
           </Box>
-          <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
             <Chip 
               label={`ID: ${question.id}`} 
-              size="small"
+              size="medium"
               sx={{
-                background: 'rgba(79, 139, 255, 0.1)',
-                border: '1px solid rgba(79, 139, 255, 0.2)',
-                color: 'rgba(255, 255, 255, 0.8)',
+                background: 'rgba(79, 139, 255, 0.15)',
+                border: '1px solid rgba(79, 139, 255, 0.3)',
+                color: 'rgba(255, 255, 255, 0.9)',
                 fontWeight: 600,
+                fontSize: '0.9rem',
+                py: 2.5,
+                px: 1,
+                '&:hover': {
+                  background: 'rgba(79, 139, 255, 0.25)',
+                },
               }}
             />
             <Chip 
               label={`${question.testcases.length} testcases`} 
-              size="small"
+              size="medium"
               sx={{
-                background: 'rgba(79, 139, 255, 0.1)',
-                border: '1px solid rgba(79, 139, 255, 0.2)',
-                color: 'rgba(255, 255, 255, 0.8)',
+                background: 'rgba(79, 139, 255, 0.15)',
+                border: '1px solid rgba(79, 139, 255, 0.3)',
+                color: 'rgba(255, 255, 255, 0.9)',
                 fontWeight: 600,
+                fontSize: '0.9rem',
+                py: 2.5,
+                px: 1,
+                '&:hover': {
+                  background: 'rgba(79, 139, 255, 0.25)',
+                },
               }}
             />
           </Box>

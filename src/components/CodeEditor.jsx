@@ -53,21 +53,40 @@ export default function CodeEditor({ code, onChange, onRun }) {
   }
 
   return (
-    <Editor
-      height="420px"
-      defaultLanguage="python"
-      value={code}
-      onChange={onChange}
-      onMount={handleEditorDidMount}
-      options={{
-        fontSize: 15,
-        minimap: { enabled: false },
-        smoothScrolling: true,
-        scrollBeyondLastLine: false,
-        wordWrap: 'on',
-        automaticLayout: true,
+    <Box
+      sx={{
+        width: '100%',
+        height: 'calc(100vh - 300px)',
+        minHeight: '600px',
+        position: 'relative',
       }}
-    />
+    >
+      <Editor
+        height="100%"
+        defaultLanguage="python"
+        value={code}
+        onChange={onChange}
+        onMount={handleEditorDidMount}
+        options={{
+          fontSize: 16,
+          lineHeight: 24,
+          minimap: { enabled: false },
+          smoothScrolling: true,
+          scrollBeyondLastLine: false,
+          wordWrap: 'on',
+          automaticLayout: true,
+          padding: { top: 20, bottom: 20 },
+          renderLineHighlight: 'all',
+          cursorBlinking: 'smooth',
+          cursorSmoothCaretAnimation: true,
+          fontFamily: "'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace",
+          fontLigatures: true,
+          tabSize: 4,
+          insertSpaces: true,
+          detectIndentation: true,
+        }}
+      />
+    </Box>
   )
 }
 

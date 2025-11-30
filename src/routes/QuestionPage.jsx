@@ -418,15 +418,58 @@ sys.stdout = StringIO()
               <Grid item xs={12} md={6}>
                 <Paper 
                   sx={{ 
-                    p: 4, 
+                    p: 5, 
                     mb: 3,
                     background: 'linear-gradient(145deg, #0f0f0f 0%, #000000 100%)',
                     border: '2px solid rgba(79, 139, 255, 0.2)',
                     boxShadow: '0 12px 40px rgba(79, 139, 255, 0.15), 0 0 0 1px rgba(79, 139, 255, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 -2px 4px rgba(79, 139, 255, 0.05)',
                     position: 'relative',
                     zIndex: 1,
+                    maxHeight: 'calc(100vh - 200px)',
+                    overflowY: 'auto',
+                    '&::-webkit-scrollbar': {
+                      width: '8px',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                      background: 'rgba(0, 0, 0, 0.3)',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      background: 'rgba(79, 139, 255, 0.3)',
+                      borderRadius: '4px',
+                      '&:hover': {
+                        background: 'rgba(79, 139, 255, 0.5)',
+                      },
+                    },
                   }}
                 >
+                  <Typography 
+                    variant="h5" 
+                    sx={{ 
+                      mb: 3, 
+                      color: '#4F8BFF',
+                      fontWeight: 700,
+                      textShadow: '0 0 20px rgba(79, 139, 255, 0.4)',
+                      letterSpacing: '0.5px',
+                      fontSize: '1.5rem',
+                    }}
+                  >
+                    Description
+                  </Typography>
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      mb: 4, 
+                      whiteSpace: 'pre-wrap',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      lineHeight: 1.9,
+                      fontSize: '1.05rem',
+                    }}
+                  >
+                    {question.description}
+                  </Typography>
+
+                  <Divider sx={{ my: 4, borderColor: 'rgba(79, 139, 255, 0.2)' }} />
+
                   <Typography 
                     variant="h6" 
                     sx={{ 
@@ -437,51 +480,26 @@ sys.stdout = StringIO()
                       letterSpacing: '0.5px',
                     }}
                   >
-                    Description
+                    Constraints
                   </Typography>
                   <Typography 
                     variant="body1" 
                     sx={{ 
-                      mb: 3, 
-                      whiteSpace: 'pre-wrap',
-                      color: 'rgba(255, 255, 255, 0.85)',
-                      lineHeight: 1.7,
-                    }}
-                  >
-                    {question.description}
-                  </Typography>
-
-                  <Divider sx={{ my: 3, borderColor: 'rgba(79, 139, 255, 0.2)' }} />
-
-                  <Typography 
-                    variant="h6" 
-                    sx={{ 
-                      mb: 2, 
-                      color: '#4F8BFF',
-                      fontWeight: 700,
-                      textShadow: '0 0 15px rgba(79, 139, 255, 0.3)',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    Constraints
-                  </Typography>
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
-                      mb: 3,
-                      color: 'rgba(255, 255, 255, 0.65)',
+                      mb: 4,
+                      color: 'rgba(255, 255, 255, 0.75)',
                       fontWeight: 500,
+                      fontSize: '1rem',
                     }}
                   >
                     {question.constraints}
                   </Typography>
 
-                  <Divider sx={{ my: 3, borderColor: 'rgba(79, 139, 255, 0.2)' }} />
+                  <Divider sx={{ my: 4, borderColor: 'rgba(79, 139, 255, 0.2)' }} />
 
                   <Typography 
                     variant="h6" 
                     sx={{ 
-                      mb: 2, 
+                      mb: 2.5, 
                       color: '#4F8BFF',
                       fontWeight: 700,
                       textShadow: '0 0 15px rgba(79, 139, 255, 0.3)',
@@ -492,20 +510,22 @@ sys.stdout = StringIO()
                   </Typography>
                   <Paper 
                     sx={{ 
-                      p: 2.5, 
-                      mb: 2.5,
+                      p: 3, 
+                      mb: 3,
                       background: 'linear-gradient(145deg, #000000 0%, #0a0a0a 100%)',
-                      border: '1px solid rgba(79, 139, 255, 0.15)',
-                      boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(79, 139, 255, 0.1)',
+                      border: '1px solid rgba(79, 139, 255, 0.2)',
+                      boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(79, 139, 255, 0.15)',
                     }}
                   >
                     <Typography 
-                      variant="body2" 
+                      variant="body1" 
                       component="pre" 
                       sx={{ 
                         fontFamily: 'monospace', 
                         margin: 0,
-                        color: 'rgba(255, 255, 255, 0.9)',
+                        color: 'rgba(255, 255, 255, 0.95)',
+                        fontSize: '0.95rem',
+                        lineHeight: 1.6,
                       }}
                     >
                       {question.sampleInput || 'N/A'}
@@ -515,7 +535,7 @@ sys.stdout = StringIO()
                   <Typography 
                     variant="h6" 
                     sx={{ 
-                      mb: 2, 
+                      mb: 2.5, 
                       color: '#4F8BFF',
                       fontWeight: 700,
                       textShadow: '0 0 15px rgba(79, 139, 255, 0.3)',
@@ -526,19 +546,21 @@ sys.stdout = StringIO()
                   </Typography>
                   <Paper 
                     sx={{ 
-                      p: 2.5,
+                      p: 3,
                       background: 'linear-gradient(145deg, #000000 0%, #0a0a0a 100%)',
-                      border: '1px solid rgba(79, 139, 255, 0.15)',
-                      boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(79, 139, 255, 0.1)',
+                      border: '1px solid rgba(79, 139, 255, 0.2)',
+                      boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(79, 139, 255, 0.15)',
                     }}
                   >
                     <Typography 
-                      variant="body2" 
+                      variant="body1" 
                       component="pre" 
                       sx={{ 
                         fontFamily: 'monospace', 
                         margin: 0,
-                        color: 'rgba(255, 255, 255, 0.9)',
+                        color: 'rgba(255, 255, 255, 0.95)',
+                        fontSize: '0.95rem',
+                        lineHeight: 1.6,
                       }}
                     >
                       {question.sampleOutput}
@@ -550,34 +572,47 @@ sys.stdout = StringIO()
               <Grid item xs={12} md={6}>
                 <Paper 
                   sx={{ 
-                    p: 4, 
+                    p: 0,
                     mb: 3,
                     background: 'linear-gradient(145deg, #0f0f0f 0%, #000000 100%)',
                     border: '2px solid rgba(79, 139, 255, 0.2)',
                     boxShadow: '0 12px 40px rgba(79, 139, 255, 0.15), 0 0 0 1px rgba(79, 139, 255, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 -2px 4px rgba(79, 139, 255, 0.05)',
                     position: 'relative',
                     zIndex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: 'calc(100vh - 200px)',
+                    minHeight: '700px',
                   }}
                 >
-                  <Typography 
-                    variant="h6" 
-                    sx={{ 
-                      mb: 3, 
-                      color: '#4F8BFF',
-                      fontWeight: 700,
-                      textShadow: '0 0 15px rgba(79, 139, 255, 0.3)',
-                      letterSpacing: '0.5px',
+                  <Box
+                    sx={{
+                      p: 3,
+                      borderBottom: '1px solid rgba(79, 139, 255, 0.2)',
+                      background: 'rgba(0, 0, 0, 0.3)',
                     }}
                   >
-                    Code Editor
-                  </Typography>
+                    <Typography 
+                      variant="h6" 
+                      sx={{ 
+                        color: '#4F8BFF',
+                        fontWeight: 700,
+                        textShadow: '0 0 15px rgba(79, 139, 255, 0.3)',
+                        letterSpacing: '0.5px',
+                      }}
+                    >
+                      Code Editor
+                    </Typography>
+                  </Box>
                   <Box 
                     sx={{ 
-                      border: '2px solid rgba(79, 139, 255, 0.3)',
+                      flex: 1,
+                      border: 'none',
                       overflow: 'hidden',
                       background: '#000000',
-                      boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(79, 139, 255, 0.1)',
                       position: 'relative',
+                      display: 'flex',
+                      flexDirection: 'column',
                       '&::before': {
                         content: '""',
                         position: 'absolute',
@@ -592,7 +627,15 @@ sys.stdout = StringIO()
                   >
                     <CodeEditor code={code} onChange={setCode} onRun={() => runCode(false)} />
                   </Box>
-                  <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
+                  <Box 
+                    sx={{ 
+                      p: 3,
+                      borderTop: '1px solid rgba(79, 139, 255, 0.2)',
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      display: 'flex',
+                      gap: 2,
+                    }}
+                  >
                     <Button
                       variant="contained"
                       startIcon={<PlayArrowIcon />}
@@ -600,6 +643,7 @@ sys.stdout = StringIO()
                       disabled={loading}
                       sx={{ 
                         flex: 1,
+                        py: 1.5,
                         background: 'linear-gradient(145deg, #1a1a1a 0%, #0a0a0a 100%)',
                         border: '1px solid rgba(79, 139, 255, 0.3)',
                         boxShadow: '0 4px 16px rgba(79, 139, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
@@ -620,6 +664,7 @@ sys.stdout = StringIO()
                       disabled={loading}
                       sx={{ 
                         flex: 1,
+                        py: 1.5,
                         background: 'linear-gradient(145deg, #1a4a1a 0%, #0a2a0a 100%)',
                         border: '1px solid rgba(76, 175, 80, 0.3)',
                         boxShadow: '0 4px 16px rgba(76, 175, 80, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
