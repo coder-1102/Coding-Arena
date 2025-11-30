@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import Editor from '@monaco-editor/react'
+import { Box } from '@mui/material'
 
 export default function CodeEditor({ code, onChange, onRun }) {
   const editorRef = useRef(null)
