@@ -24,13 +24,41 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { motion } from 'framer-motion'
 import confetti from 'canvas-confetti'
-import { loadPyodide } from 'pyodide'
 
 let pyodideInstance = null
 
 const loadPyodideInstance = async () => {
   if (!pyodideInstance) {
-    pyodideInstance = await loadPyodide()
+    // Load Pyodide from CDN to avoid bundling issues
+    if (!window.loadPyodide) {
+      // Load the Pyodide script if not already loaded
+      await new Promise((resolve, reject) => {
+        if (document.querySelector('script[src*="pyodide"]')) {
+          // Script already exists, wait for it to load
+          const checkLoad = setInterval(() => {
+            if (window.loadPyodide) {
+              clearInterval(checkLoad)
+              resolve()
+            }
+          }, 100)
+          setTimeout(() => {
+            clearInterval(checkLoad)
+            reject(new Error('Pyodide script timeout'))
+          }, 10000)
+        } else {
+          const script = document.createElement('script')
+          script.src = 'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js'
+          script.onload = resolve
+          script.onerror = reject
+          document.head.appendChild(script)
+        }
+      })
+    }
+    
+    // Now load Pyodide instance
+    pyodideInstance = await window.loadPyodide({
+      indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/'
+    })
   }
   return pyodideInstance
 }

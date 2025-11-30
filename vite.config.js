@@ -11,6 +11,11 @@ export default defineConfig({
         changeOrigin: true
       }
     }
+  },
+  build: {
+    commonjsOptions: {
+      transformMixedEsModules: true
+    }
   }
 })
 
