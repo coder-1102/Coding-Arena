@@ -351,7 +351,19 @@ sys.stdout = StringIO()
         sx={{
           flexGrow: 1,
           p: 3,
-          backgroundColor: '#0a0e27',
+          background: 'linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #000000 100%)',
+          minHeight: '100vh',
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'radial-gradient(circle at 20% 50%, rgba(79, 139, 255, 0.03) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(79, 139, 255, 0.02) 0%, transparent 50%)',
+            pointerEvents: 'none',
+          },
         }}
       >
         <Container maxWidth="xl">
@@ -360,55 +372,175 @@ sys.stdout = StringIO()
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 4, position: 'relative', zIndex: 1 }}>
               <Button
                 startIcon={<ArrowBackIcon />}
                 onClick={() => navigate(`/category/${id}`)}
-                sx={{ mr: 2 }}
+                sx={{ 
+                  mr: 2,
+                  background: 'linear-gradient(145deg, #1a1a1a 0%, #0a0a0a 100%)',
+                  border: '1px solid rgba(79, 139, 255, 0.3)',
+                  boxShadow: '0 4px 16px rgba(79, 139, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+                  '&:hover': {
+                    background: 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 100%)',
+                    boxShadow: '0 6px 24px rgba(79, 139, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                  },
+                }}
               >
                 Back
               </Button>
-              <Typography variant="h4" component="h1" sx={{ color: '#4F8BFF', fontWeight: 'bold', flex: 1 }}>
+              <Typography 
+                variant="h4" 
+                component="h1" 
+                sx={{ 
+                  color: '#4F8BFF', 
+                  fontWeight: 700, 
+                  flex: 1,
+                  textShadow: '0 0 20px rgba(79, 139, 255, 0.4)',
+                  letterSpacing: '0.5px',
+                }}
+              >
                 {question.title}
-                {solved && <CheckCircleIcon sx={{ ml: 2, color: '#4F8BFF', verticalAlign: 'middle' }} />}
+                {solved && (
+                  <CheckCircleIcon 
+                    sx={{ 
+                      ml: 2, 
+                      color: '#4F8BFF', 
+                      verticalAlign: 'middle',
+                      filter: 'drop-shadow(0 0 8px rgba(79, 139, 255, 0.6))',
+                    }} 
+                  />
+                )}
               </Typography>
             </Box>
 
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
-                <Paper sx={{ p: 3, mb: 3 }}>
-                  <Typography variant="h6" sx={{ mb: 2, color: '#4F8BFF' }}>
+                <Paper 
+                  sx={{ 
+                    p: 4, 
+                    mb: 3,
+                    background: 'linear-gradient(145deg, #0f0f0f 0%, #000000 100%)',
+                    border: '2px solid rgba(79, 139, 255, 0.2)',
+                    boxShadow: '0 12px 40px rgba(79, 139, 255, 0.15), 0 0 0 1px rgba(79, 139, 255, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 -2px 4px rgba(79, 139, 255, 0.05)',
+                    position: 'relative',
+                    zIndex: 1,
+                  }}
+                >
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      mb: 2.5, 
+                      color: '#4F8BFF',
+                      fontWeight: 700,
+                      textShadow: '0 0 15px rgba(79, 139, 255, 0.3)',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
                     Description
                   </Typography>
-                  <Typography variant="body1" sx={{ mb: 3, whiteSpace: 'pre-wrap' }}>
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      mb: 3, 
+                      whiteSpace: 'pre-wrap',
+                      color: 'rgba(255, 255, 255, 0.85)',
+                      lineHeight: 1.7,
+                    }}
+                  >
                     {question.description}
                   </Typography>
 
-                  <Divider sx={{ my: 2 }} />
+                  <Divider sx={{ my: 3, borderColor: 'rgba(79, 139, 255, 0.2)' }} />
 
-                  <Typography variant="h6" sx={{ mb: 2, color: '#4F8BFF' }}>
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      mb: 2, 
+                      color: '#4F8BFF',
+                      fontWeight: 700,
+                      textShadow: '0 0 15px rgba(79, 139, 255, 0.3)',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
                     Constraints
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      mb: 3,
+                      color: 'rgba(255, 255, 255, 0.65)',
+                      fontWeight: 500,
+                    }}
+                  >
                     {question.constraints}
                   </Typography>
 
-                  <Divider sx={{ my: 2 }} />
+                  <Divider sx={{ my: 3, borderColor: 'rgba(79, 139, 255, 0.2)' }} />
 
-                  <Typography variant="h6" sx={{ mb: 2, color: '#4F8BFF' }}>
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      mb: 2, 
+                      color: '#4F8BFF',
+                      fontWeight: 700,
+                      textShadow: '0 0 15px rgba(79, 139, 255, 0.3)',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
                     Sample Input
                   </Typography>
-                  <Paper sx={{ p: 2, backgroundColor: '#1a1f3a', mb: 2 }}>
-                    <Typography variant="body2" component="pre" sx={{ fontFamily: 'monospace', margin: 0 }}>
+                  <Paper 
+                    sx={{ 
+                      p: 2.5, 
+                      mb: 2.5,
+                      background: 'linear-gradient(145deg, #000000 0%, #0a0a0a 100%)',
+                      border: '1px solid rgba(79, 139, 255, 0.15)',
+                      boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(79, 139, 255, 0.1)',
+                    }}
+                  >
+                    <Typography 
+                      variant="body2" 
+                      component="pre" 
+                      sx={{ 
+                        fontFamily: 'monospace', 
+                        margin: 0,
+                        color: 'rgba(255, 255, 255, 0.9)',
+                      }}
+                    >
                       {question.sampleInput || 'N/A'}
                     </Typography>
                   </Paper>
 
-                  <Typography variant="h6" sx={{ mb: 2, color: '#4F8BFF' }}>
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      mb: 2, 
+                      color: '#4F8BFF',
+                      fontWeight: 700,
+                      textShadow: '0 0 15px rgba(79, 139, 255, 0.3)',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
                     Sample Output
                   </Typography>
-                  <Paper sx={{ p: 2, backgroundColor: '#1a1f3a' }}>
-                    <Typography variant="body2" component="pre" sx={{ fontFamily: 'monospace', margin: 0 }}>
+                  <Paper 
+                    sx={{ 
+                      p: 2.5,
+                      background: 'linear-gradient(145deg, #000000 0%, #0a0a0a 100%)',
+                      border: '1px solid rgba(79, 139, 255, 0.15)',
+                      boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(79, 139, 255, 0.1)',
+                    }}
+                  >
+                    <Typography 
+                      variant="body2" 
+                      component="pre" 
+                      sx={{ 
+                        fontFamily: 'monospace', 
+                        margin: 0,
+                        color: 'rgba(255, 255, 255, 0.9)',
+                      }}
+                    >
                       {question.sampleOutput}
                     </Typography>
                   </Paper>
@@ -416,29 +548,89 @@ sys.stdout = StringIO()
               </Grid>
 
               <Grid item xs={12} md={6}>
-                <Paper sx={{ p: 3, mb: 3 }}>
-                  <Typography variant="h6" sx={{ mb: 2, color: '#4F8BFF' }}>
+                <Paper 
+                  sx={{ 
+                    p: 4, 
+                    mb: 3,
+                    background: 'linear-gradient(145deg, #0f0f0f 0%, #000000 100%)',
+                    border: '2px solid rgba(79, 139, 255, 0.2)',
+                    boxShadow: '0 12px 40px rgba(79, 139, 255, 0.15), 0 0 0 1px rgba(79, 139, 255, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 -2px 4px rgba(79, 139, 255, 0.05)',
+                    position: 'relative',
+                    zIndex: 1,
+                  }}
+                >
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      mb: 3, 
+                      color: '#4F8BFF',
+                      fontWeight: 700,
+                      textShadow: '0 0 15px rgba(79, 139, 255, 0.3)',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
                     Code Editor
                   </Typography>
-                  <Box sx={{ border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: 2, overflow: 'hidden' }}>
+                  <Box 
+                    sx={{ 
+                      border: '2px solid rgba(79, 139, 255, 0.3)',
+                      overflow: 'hidden',
+                      background: '#000000',
+                      boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(79, 139, 255, 0.1)',
+                      position: 'relative',
+                      '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: '2px',
+                        background: 'linear-gradient(90deg, transparent, rgba(79, 139, 255, 0.5), transparent)',
+                        zIndex: 1,
+                      },
+                    }}
+                  >
                     <CodeEditor code={code} onChange={setCode} onRun={() => runCode(false)} />
                   </Box>
-                  <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
+                  <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
                     <Button
                       variant="contained"
                       startIcon={<PlayArrowIcon />}
                       onClick={() => runCode(false)}
                       disabled={loading}
-                      sx={{ flex: 1 }}
+                      sx={{ 
+                        flex: 1,
+                        background: 'linear-gradient(145deg, #1a1a1a 0%, #0a0a0a 100%)',
+                        border: '1px solid rgba(79, 139, 255, 0.3)',
+                        boxShadow: '0 4px 16px rgba(79, 139, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+                        '&:hover': {
+                          background: 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 100%)',
+                          boxShadow: '0 6px 24px rgba(79, 139, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                        },
+                        '&:disabled': {
+                          opacity: 0.5,
+                        },
+                      }}
                     >
                       {loading ? 'Running...' : 'Run Code (Ctrl+Enter)'}
                     </Button>
                     <Button
                       variant="contained"
-                      color="success"
                       onClick={() => runCode(true)}
                       disabled={loading}
-                      sx={{ flex: 1 }}
+                      sx={{ 
+                        flex: 1,
+                        background: 'linear-gradient(145deg, #1a4a1a 0%, #0a2a0a 100%)',
+                        border: '1px solid rgba(76, 175, 80, 0.3)',
+                        boxShadow: '0 4px 16px rgba(76, 175, 80, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+                        '&:hover': {
+                          background: 'linear-gradient(145deg, #2a5a2a 0%, #1a4a1a 100%)',
+                          boxShadow: '0 6px 24px rgba(76, 175, 80, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                        },
+                        '&:disabled': {
+                          opacity: 0.5,
+                        },
+                      }}
                     >
                       Submit
                     </Button>

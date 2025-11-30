@@ -75,7 +75,19 @@ export default function Dashboard() {
         sx={{
           flexGrow: 1,
           p: 3,
-          backgroundColor: '#0a0e27',
+          background: 'linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #000000 100%)',
+          minHeight: '100vh',
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'radial-gradient(circle at 20% 50%, rgba(79, 139, 255, 0.03) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(79, 139, 255, 0.02) 0%, transparent 50%)',
+            pointerEvents: 'none',
+          },
         }}
       >
         <Container maxWidth="lg">
@@ -84,7 +96,19 @@ export default function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Typography variant="h4" component="h1" sx={{ mb: 4, color: '#4F8BFF', fontWeight: 'bold' }}>
+            <Typography 
+              variant="h4" 
+              component="h1" 
+              sx={{ 
+                mb: 4, 
+                color: '#4F8BFF', 
+                fontWeight: 700,
+                textShadow: '0 0 20px rgba(79, 139, 255, 0.4)',
+                letterSpacing: '0.5px',
+                position: 'relative',
+                zIndex: 1,
+              }}
+            >
               Dashboard
             </Typography>
             <Grid container spacing={3}>

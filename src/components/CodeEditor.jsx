@@ -18,15 +18,38 @@ export default function CodeEditor({ code, onChange, onRun }) {
 
   const handleEditorDidMount = (editor, monaco) => {
     editorRef.current = editor
-    monaco.editor.defineTheme('custom-dark', {
+    monaco.editor.defineTheme('premium-dark', {
       base: 'vs-dark',
       inherit: true,
-      rules: [],
+      rules: [
+        { token: 'comment', foreground: '6A9955', fontStyle: 'italic' },
+        { token: 'keyword', foreground: '569CD6', fontStyle: 'bold' },
+        { token: 'string', foreground: 'CE9178' },
+        { token: 'number', foreground: 'B5CEA8' },
+        { token: 'type', foreground: '4EC9B0' },
+        { token: 'function', foreground: 'DCDCAA' },
+      ],
       colors: {
-        'editor.background': '#1a1f3a',
+        'editor.background': '#000000',
+        'editor.foreground': '#D4D4D4',
+        'editor.lineHighlightBackground': '#0a0a0a',
+        'editor.selectionBackground': '#264F78',
+        'editor.inactiveSelectionBackground': '#3A3D41',
+        'editorIndentGuide.background': '#404040',
+        'editorIndentGuide.activeBackground': '#707070',
+        'editorCursor.foreground': '#4F8BFF',
+        'editorWhitespace.foreground': '#3B3A32',
+        'editorLineNumber.foreground': '#858585',
+        'editorLineNumber.activeForeground': '#C6C6C6',
+        'editorGutter.background': '#000000',
+        'editorWidget.background': '#1E1E1E',
+        'editorWidget.border': '#454545',
+        'editorSuggestWidget.background': '#1E1E1E',
+        'editorSuggestWidget.border': '#454545',
+        'editorSuggestWidget.selectedBackground': '#264F78',
       },
     })
-    monaco.editor.setTheme('custom-dark')
+    monaco.editor.setTheme('premium-dark')
   }
 
   return (
