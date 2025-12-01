@@ -25,6 +25,8 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import BookmarkIcon from '@mui/icons-material/Bookmark'
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder'
 import LightbulbIcon from '@mui/icons-material/Lightbulb'
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { motion } from 'framer-motion'
 import confetti from 'canvas-confetti'
 import {
@@ -88,6 +90,8 @@ export default function QuestionPage() {
   const [attempts, setAttempts] = useState(0)
   const [hintShown, setHintShown] = useState(false)
   const [hintDialogOpen, setHintDialogOpen] = useState(false)
+  const [categoryQuestions, setCategoryQuestions] = useState([])
+  const [currentIndex, setCurrentIndex] = useState(-1)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -98,19 +102,25 @@ export default function QuestionPage() {
 
       setUser(currentUser)
 
-      const categoryQuestions = questions[id]
-      if (!categoryQuestions) {
+      const categoryQuestionsList = questions[id]
+      if (!categoryQuestionsList) {
         navigate('/dashboard')
         return
       }
 
-      const q = categoryQuestions.find(q => q.id === parseInt(qid))
+      setCategoryQuestions(categoryQuestionsList)
+
+      const q = categoryQuestionsList.find(q => q.id === parseInt(qid))
       if (!q) {
         navigate('/dashboard')
         return
       }
 
       setQuestion(q)
+      
+      // Find current question index
+      const index = categoryQuestionsList.findIndex(q => q.id === parseInt(qid))
+      setCurrentIndex(index)
 
       // Load saved code
       try {
@@ -456,6 +466,30 @@ sys.stdout = StringIO()
     }
   }
 
+  const navigateToQuestion = (direction) => {
+    if (currentIndex === -1 || categoryQuestions.length === 0) return
+
+    let newIndex
+    if (direction === 'next') {
+      newIndex = currentIndex + 1
+      if (newIndex >= categoryQuestions.length) {
+        // Already at last question
+        return
+      }
+    } else {
+      newIndex = currentIndex - 1
+      if (newIndex < 0) {
+        // Already at first question
+        return
+      }
+    }
+
+    const nextQuestion = categoryQuestions[newIndex]
+    if (nextQuestion) {
+      navigate(`/category/${id}/question/${nextQuestion.id}`)
+    }
+  }
+
   if (!question) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -588,6 +622,58 @@ sys.stdout = StringIO()
                   View Hint
                 </Button>
               )}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 3 }}>
+                <IconButton
+                  onClick={() => navigateToQuestion('prev')}
+                  disabled={currentIndex <= 0}
+                  sx={{
+                    color: currentIndex <= 0 ? 'rgba(255, 255, 255, 0.3)' : '#4F8BFF',
+                    border: `1px solid ${currentIndex <= 0 ? 'rgba(79, 139, 255, 0.1)' : 'rgba(79, 139, 255, 0.3)'}`,
+                    '&:hover': {
+                      background: currentIndex <= 0 ? 'transparent' : 'rgba(79, 139, 255, 0.1)',
+                      border: `1px solid ${currentIndex <= 0 ? 'rgba(79, 139, 255, 0.1)' : 'rgba(79, 139, 255, 0.5)'}`,
+                    },
+                    '&:disabled': {
+                      opacity: 0.3,
+                    },
+                  }}
+                  title="Previous Question"
+                >
+                  <ChevronLeftIcon />
+                </IconButton>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    minWidth: '80px',
+                    textAlign: 'center',
+                    fontSize: '0.875rem',
+                  }}
+                >
+                  {currentIndex >= 0 && categoryQuestions.length > 0 
+                    ? `${currentIndex + 1} / ${categoryQuestions.length}`
+                    : ''
+                  }
+                </Typography>
+                <IconButton
+                  onClick={() => navigateToQuestion('next')}
+                  disabled={currentIndex >= categoryQuestions.length - 1}
+                  sx={{
+                    color: currentIndex >= categoryQuestions.length - 1 ? 'rgba(255, 255, 255, 0.3)' : '#4F8BFF',
+                    border: `1px solid ${currentIndex >= categoryQuestions.length - 1 ? 'rgba(79, 139, 255, 0.1)' : 'rgba(79, 139, 255, 0.3)'}`,
+                    '&:hover': {
+                      background: currentIndex >= categoryQuestions.length - 1 ? 'transparent' : 'rgba(79, 139, 255, 0.1)',
+                      border: `1px solid ${currentIndex >= categoryQuestions.length - 1 ? 'rgba(79, 139, 255, 0.1)' : 'rgba(79, 139, 255, 0.5)'}`,
+                    },
+                    '&:disabled': {
+                      opacity: 0.3,
+                    },
+                  }}
+                  title="Next Question"
+                >
+                  <ChevronRightIcon />
+                </IconButton>
+              </Box>
             </Box>
 
             <Grid container spacing={3}>
