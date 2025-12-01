@@ -18,6 +18,11 @@ import {
   Snackbar,
   Alert,
   Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
 } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
@@ -27,15 +32,9 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder'
 import LightbulbIcon from '@mui/icons-material/Lightbulb'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import HistoryIcon from '@mui/icons-material/History'
 import { motion } from 'framer-motion'
 import confetti from 'canvas-confetti'
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  IconButton,
-} from '@mui/material'
 
 let pyodideInstance = null
 
@@ -92,6 +91,8 @@ export default function QuestionPage() {
   const [hintDialogOpen, setHintDialogOpen] = useState(false)
   const [categoryQuestions, setCategoryQuestions] = useState([])
   const [currentIndex, setCurrentIndex] = useState(-1)
+  const [lastSolution, setLastSolution] = useState(null)
+  const [lastSolutionDialogOpen, setLastSolutionDialogOpen] = useState(false)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -165,6 +166,16 @@ export default function QuestionPage() {
         }
       } catch (error) {
         console.error('Error loading attempts:', error)
+      }
+
+      // Load last solution
+      try {
+        const lastSolutionDoc = await getDoc(doc(db, 'users', currentUser.uid, 'lastSolutions', `${id}_${qid}`))
+        if (lastSolutionDoc.exists() && lastSolutionDoc.data().code) {
+          setLastSolution(lastSolutionDoc.data().code)
+        }
+      } catch (error) {
+        console.error('Error loading last solution:', error)
       }
     })
 
@@ -490,6 +501,22 @@ sys.stdout = StringIO()
     }
   }
 
+  const handleViewLastSolution = () => {
+    setLastSolutionDialogOpen(true)
+  }
+
+  const handleUseLastSolution = () => {
+    if (lastSolution) {
+      setCode(lastSolution)
+      setLastSolutionDialogOpen(false)
+      setSnackbar({
+        open: true,
+        message: 'Last solution loaded into editor!',
+        severity: 'success',
+      })
+    }
+  }
+
   if (!question) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -620,6 +647,25 @@ sys.stdout = StringIO()
                   }}
                 >
                   View Hint
+                </Button>
+              )}
+              {lastSolution && (
+                <Button
+                  startIcon={<HistoryIcon />}
+                  onClick={handleViewLastSolution}
+                  sx={{
+                    ml: 2,
+                    background: 'linear-gradient(145deg, #6B46C1 0%, #4C1D95 100%)',
+                    border: '1px solid rgba(107, 70, 193, 0.3)',
+                    color: '#fff',
+                    fontWeight: 700,
+                    '&:hover': {
+                      background: 'linear-gradient(145deg, #7C3AED 0%, #5B21B6 100%)',
+                      boxShadow: '0 6px 24px rgba(107, 70, 193, 0.3)',
+                    },
+                  }}
+                >
+                  Last Solution
                 </Button>
               )}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 3 }}>
@@ -987,6 +1033,70 @@ sys.stdout = StringIO()
         <DialogActions>
           <Button onClick={() => setHintDialogOpen(false)} sx={{ color: '#4F8BFF' }}>
             Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={lastSolutionDialogOpen}
+        onClose={() => setLastSolutionDialogOpen(false)}
+        maxWidth="lg"
+        fullWidth
+        PaperProps={{
+          sx: {
+            background: 'linear-gradient(145deg, #0f0f0f 0%, #000000 100%)',
+            border: '2px solid rgba(107, 70, 193, 0.3)',
+            boxShadow: '0 12px 40px rgba(107, 70, 193, 0.2)',
+          },
+        }}
+      >
+        <DialogTitle sx={{ color: '#7C3AED', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
+          <HistoryIcon sx={{ color: '#7C3AED' }} />
+          Last Solution
+        </DialogTitle>
+        <DialogContent>
+          <Typography sx={{ color: 'rgba(255, 255, 255, 0.7)', mb: 2, fontSize: '0.9rem' }}>
+            This is your last correct solution before reset. You can copy it or load it into the editor.
+          </Typography>
+          <Paper
+            sx={{
+              p: 2,
+              background: '#000000',
+              border: '1px solid rgba(107, 70, 193, 0.2)',
+              maxHeight: '400px',
+              overflow: 'auto',
+            }}
+          >
+            <Typography
+              component="pre"
+              sx={{
+                fontFamily: 'monospace',
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontSize: '0.875rem',
+                margin: 0,
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+              }}
+            >
+              {lastSolution}
+            </Typography>
+          </Paper>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setLastSolutionDialogOpen(false)} sx={{ color: '#4F8BFF' }}>
+            Close
+          </Button>
+          <Button 
+            onClick={handleUseLastSolution} 
+            sx={{ 
+              color: '#7C3AED',
+              fontWeight: 700,
+              '&:hover': {
+                background: 'rgba(107, 70, 193, 0.1)',
+              },
+            }}
+          >
+            Load into Editor
           </Button>
         </DialogActions>
       </Dialog>
