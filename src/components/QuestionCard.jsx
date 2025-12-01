@@ -7,9 +7,10 @@ import {
   Chip,
 } from '@mui/material'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import BookmarkIcon from '@mui/icons-material/Bookmark'
 import { motion } from 'framer-motion'
 
-export default function QuestionCard({ question, categoryId, solved }) {
+export default function QuestionCard({ question, categoryId, solved, marked }) {
   const navigate = useNavigate()
 
   const handleClick = () => {
@@ -25,14 +26,20 @@ export default function QuestionCard({ question, categoryId, solved }) {
       <Card
         sx={{
           cursor: 'pointer',
-          background: solved
-            ? 'linear-gradient(145deg, #0f0f0f 0%, #000000 100%)'
+          background: solved || marked
+            ? solved 
+              ? 'linear-gradient(145deg, #0f0f0f 0%, #000000 100%)'
+              : 'linear-gradient(145deg, #1a1800 0%, #000000 100%)'
             : 'linear-gradient(145deg, #0a0a0a 0%, #000000 100%)',
           border: solved 
             ? '2px solid rgba(79, 139, 255, 0.3)'
+            : marked
+            ? '2px solid rgba(255, 215, 0, 0.3)'
             : '2px solid rgba(79, 139, 255, 0.1)',
           boxShadow: solved
             ? '0 12px 40px rgba(79, 139, 255, 0.15), 0 0 0 1px rgba(79, 139, 255, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 -2px 4px rgba(79, 139, 255, 0.05)'
+            : marked
+            ? '0 12px 40px rgba(255, 215, 0, 0.15), 0 0 0 1px rgba(255, 215, 0, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 -2px 4px rgba(255, 215, 0, 0.05)'
             : '0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(79, 139, 255, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.5)',
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           position: 'relative',
@@ -45,15 +52,23 @@ export default function QuestionCard({ question, categoryId, solved }) {
             height: '2px',
             background: solved
               ? 'linear-gradient(90deg, transparent, rgba(79, 139, 255, 0.5), transparent)'
+              : marked
+              ? 'linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.5), transparent)'
               : 'linear-gradient(90deg, transparent, rgba(79, 139, 255, 0.2), transparent)',
-            opacity: solved ? 1 : 0,
+            opacity: solved || marked ? 1 : 0,
             transition: 'opacity 0.3s',
           },
           '&:hover': {
             boxShadow: solved
               ? '0 16px 48px rgba(79, 139, 255, 0.25), 0 0 0 1px rgba(79, 139, 255, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.5)'
+              : marked
+              ? '0 16px 48px rgba(255, 215, 0, 0.25), 0 0 0 1px rgba(255, 215, 0, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.5)'
               : '0 12px 32px rgba(79, 139, 255, 0.2), 0 0 0 1px rgba(79, 139, 255, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.5)',
-            border: '2px solid rgba(79, 139, 255, 0.4)',
+            border: solved 
+              ? '2px solid rgba(79, 139, 255, 0.4)'
+              : marked
+              ? '2px solid rgba(255, 215, 0, 0.4)'
+              : '2px solid rgba(79, 139, 255, 0.4)',
             '&::before': {
               opacity: 1,
             },
@@ -69,9 +84,9 @@ export default function QuestionCard({ question, categoryId, solved }) {
                 component="h3" 
                 sx={{ 
                   mb: 2, 
-                  color: solved ? '#4F8BFF' : 'rgba(255, 255, 255, 0.95)',
+                  color: solved ? '#4F8BFF' : marked ? '#FFD700' : 'rgba(255, 255, 255, 0.95)',
                   fontWeight: 700,
-                  textShadow: solved ? '0 0 20px rgba(79, 139, 255, 0.4)' : 'none',
+                  textShadow: solved ? '0 0 20px rgba(79, 139, 255, 0.4)' : marked ? '0 0 20px rgba(255, 215, 0, 0.4)' : 'none',
                   letterSpacing: '0.5px',
                   fontSize: '1.5rem',
                 }}
@@ -90,17 +105,26 @@ export default function QuestionCard({ question, categoryId, solved }) {
                 {question.description.substring(0, 150)}...
               </Typography>
             </Box>
-            {solved && (
-              <CheckCircleIcon 
-                sx={{ 
-                  color: '#4F8BFF', 
-                  ml: 2,
-                  fontSize: 36,
-                  filter: 'drop-shadow(0 0 12px rgba(79, 139, 255, 0.8))',
-                  flexShrink: 0,
-                }} 
-              />
-            )}
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexShrink: 0 }}>
+              {solved && (
+                <CheckCircleIcon 
+                  sx={{ 
+                    color: '#4F8BFF', 
+                    fontSize: 36,
+                    filter: 'drop-shadow(0 0 12px rgba(79, 139, 255, 0.8))',
+                  }} 
+                />
+              )}
+              {marked && (
+                <BookmarkIcon 
+                  sx={{ 
+                    color: '#FFD700', 
+                    fontSize: 36,
+                    filter: 'drop-shadow(0 0 12px rgba(255, 215, 0, 0.8))',
+                  }} 
+                />
+              )}
+            </Box>
           </Box>
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
             <Chip 

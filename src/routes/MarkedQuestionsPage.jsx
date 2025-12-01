@@ -163,6 +163,7 @@ export default function MarkedQuestionsPage() {
                         question={question}
                         categoryId={categoryId}
                         solved={progress[categoryId]?.solved?.includes(question.id) || false}
+                        marked={true}
                       />
                     </Grid>
                   ))}

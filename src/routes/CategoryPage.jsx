@@ -24,6 +24,7 @@ export default function CategoryPage() {
   const [progress, setProgress] = useState(null)
   const [loading, setLoading] = useState(true)
   const [unlocked, setUnlocked] = useState(false)
+  const [markedQuestions, setMarkedQuestions] = useState({})
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -41,6 +42,27 @@ export default function CategoryPage() {
         } else {
           setUnlocked(id === 'Basics')
           setProgress({ solved: [], completed: false })
+        }
+
+        // Load marked questions
+        try {
+          const markedDoc = await getDoc(doc(db, 'users', user.uid, 'marked', 'questions'))
+          if (markedDoc.exists()) {
+            const markedData = markedDoc.data()
+            const markedMap = {}
+            const categoryQuestions = questions[id] || []
+            
+            categoryQuestions.forEach(q => {
+              const questionKey = `${id}_${q.id}`
+              if (markedData[questionKey]) {
+                markedMap[q.id] = true
+              }
+            })
+            
+            setMarkedQuestions(markedMap)
+          }
+        } catch (error) {
+          console.error('Error loading marked questions:', error)
         }
       } catch (error) {
         console.error('Error fetching progress:', error)
@@ -149,6 +171,7 @@ export default function CategoryPage() {
                     question={question}
                     categoryId={id}
                     solved={progress?.solved?.includes(question.id) || false}
+                    marked={markedQuestions[question.id] || false}
                   />
                 </Grid>
               ))}
