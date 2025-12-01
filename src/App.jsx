@@ -7,6 +7,7 @@ import Register from './routes/Register'
 import Dashboard from './routes/Dashboard'
 import CategoryPage from './routes/CategoryPage'
 import QuestionPage from './routes/QuestionPage'
+import MarkedQuestionsPage from './routes/MarkedQuestionsPage'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -56,6 +57,10 @@ function App() {
       <Route 
         path="/category/:id/question/:qid" 
         element={user ? <QuestionPage /> : <Navigate to="/login" />} 
+      />
+      <Route 
+        path="/marked-questions" 
+        element={user ? <MarkedQuestionsPage /> : <Navigate to="/login" />} 
       />
       <Route path="/" element={<Navigate to={user ? "/dashboard" : "/login"} />} />
     </Routes>

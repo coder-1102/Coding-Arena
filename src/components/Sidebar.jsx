@@ -22,6 +22,7 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import MenuIcon from '@mui/icons-material/Menu'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import BookmarkIcon from '@mui/icons-material/Bookmark'
 
 const drawerWidth = 260
 const collapsedWidth = 70
@@ -134,6 +135,48 @@ export default function Sidebar() {
                     primaryTypographyProps={{
                       fontWeight: location.pathname === '/dashboard' ? 700 : 500,
                       color: location.pathname === '/dashboard' ? '#4F8BFF' : 'rgba(255, 255, 255, 0.8)',
+                    }}
+                  />
+                )}
+              </ListItemButton>
+            </Tooltip>
+          </ListItem>
+          <ListItem disablePadding>
+            <Tooltip title={open ? '' : 'Mark for Review'} placement="right">
+              <ListItemButton
+                selected={location.pathname === '/marked-questions'}
+                onClick={() => navigate('/marked-questions')}
+                sx={{
+                  minHeight: 56,
+                  justifyContent: open ? 'flex-start' : 'center',
+                  px: open ? 3 : 2,
+                  '&.Mui-selected': {
+                    background: 'rgba(255, 215, 0, 0.15)',
+                    borderLeft: '3px solid #FFD700',
+                    '&:hover': {
+                      background: 'rgba(255, 215, 0, 0.2)',
+                    },
+                  },
+                  '&:hover': {
+                    background: 'rgba(255, 215, 0, 0.1)',
+                  },
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: open ? 56 : 0,
+                    justifyContent: 'center',
+                    color: location.pathname === '/marked-questions' ? '#FFD700' : 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
+                  <BookmarkIcon />
+                </ListItemIcon>
+                {open && (
+                  <ListItemText 
+                    primary="Mark for Review" 
+                    primaryTypographyProps={{
+                      fontWeight: location.pathname === '/marked-questions' ? 700 : 500,
+                      color: location.pathname === '/marked-questions' ? '#FFD700' : 'rgba(255, 255, 255, 0.8)',
                     }}
                   />
                 )}

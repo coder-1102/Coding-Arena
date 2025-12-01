@@ -22,8 +22,18 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import BookmarkIcon from '@mui/icons-material/Bookmark'
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder'
+import LightbulbIcon from '@mui/icons-material/Lightbulb'
 import { motion } from 'framer-motion'
 import confetti from 'canvas-confetti'
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+} from '@mui/material'
 
 let pyodideInstance = null
 
@@ -74,6 +84,10 @@ export default function QuestionPage() {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' })
   const [progress, setProgress] = useState(null)
   const [user, setUser] = useState(null)
+  const [marked, setMarked] = useState(false)
+  const [attempts, setAttempts] = useState(0)
+  const [hintShown, setHintShown] = useState(false)
+  const [hintDialogOpen, setHintDialogOpen] = useState(false)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -117,6 +131,30 @@ export default function QuestionPage() {
         }
       } catch (error) {
         console.error('Error loading progress:', error)
+      }
+
+      // Load marked questions
+      try {
+        const markedDoc = await getDoc(doc(db, 'users', currentUser.uid, 'marked', 'questions'))
+        if (markedDoc.exists()) {
+          const markedData = markedDoc.data()
+          const questionKey = `${id}_${qid}`
+          setMarked(markedData[questionKey] || false)
+        }
+      } catch (error) {
+        console.error('Error loading marked questions:', error)
+      }
+
+      // Load attempts and hint status
+      try {
+        const attemptsDoc = await getDoc(doc(db, 'users', currentUser.uid, 'attempts', `${id}_${qid}`))
+        if (attemptsDoc.exists()) {
+          const data = attemptsDoc.data()
+          setAttempts(data.count || 0)
+          setHintShown(data.hintShown || false)
+        }
+      } catch (error) {
+        console.error('Error loading attempts:', error)
       }
     })
 
@@ -171,7 +209,24 @@ export default function QuestionPage() {
               message: 'All testcases passed! Question solved! 🎉',
               severity: 'success',
             })
+            // Reset attempts on success
+            if (user) {
+              await setDoc(doc(db, 'users', user.uid, 'attempts', `${id}_${qid}`), {
+                count: 0,
+                hintShown: hintShown,
+              }, { merge: true })
+            }
+            setAttempts(0)
           } else {
+            // Increment failed attempts
+            const newAttempts = attempts + 1
+            setAttempts(newAttempts)
+            if (user) {
+              await setDoc(doc(db, 'users', user.uid, 'attempts', `${id}_${qid}`), {
+                count: newAttempts,
+                hintShown: hintShown,
+              }, { merge: true })
+            }
             setSnackbar({
               open: true,
               message: 'Some testcases failed. Try again!',
@@ -251,7 +306,24 @@ sys.stdout = StringIO()
               message: 'All testcases passed! Question solved! 🎉',
               severity: 'success',
             })
+            // Reset attempts on success
+            if (user) {
+              await setDoc(doc(db, 'users', user.uid, 'attempts', `${id}_${qid}`), {
+                count: 0,
+                hintShown: hintShown,
+              }, { merge: true })
+            }
+            setAttempts(0)
           } else {
+            // Increment failed attempts
+            const newAttempts = attempts + 1
+            setAttempts(newAttempts)
+            if (user) {
+              await setDoc(doc(db, 'users', user.uid, 'attempts', `${id}_${qid}`), {
+                count: newAttempts,
+                hintShown: hintShown,
+              }, { merge: true })
+            }
             setSnackbar({
               open: true,
               message: 'Some testcases failed. Try again!',
@@ -335,6 +407,55 @@ sys.stdout = StringIO()
     }
   }
 
+  const toggleMarkForReview = async () => {
+    if (!user) return
+
+    try {
+      const markedRef = doc(db, 'users', user.uid, 'marked', 'questions')
+      const markedDoc = await getDoc(markedRef)
+      
+      let markedData = {}
+      if (markedDoc.exists()) {
+        markedData = markedDoc.data()
+      }
+
+      const questionKey = `${id}_${qid}`
+      const newMarked = !marked
+      markedData[questionKey] = newMarked
+
+      // Also store category and question id for easy retrieval
+      if (newMarked) {
+        markedData[`${questionKey}_category`] = id
+        markedData[`${questionKey}_qid`] = parseInt(qid)
+      } else {
+        delete markedData[`${questionKey}_category`]
+        delete markedData[`${questionKey}_qid`]
+      }
+
+      await setDoc(markedRef, markedData, { merge: true })
+      setMarked(newMarked)
+
+      setSnackbar({
+        open: true,
+        message: newMarked ? 'Question marked for review!' : 'Question unmarked!',
+        severity: 'success',
+      })
+    } catch (error) {
+      console.error('Error toggling mark for review:', error)
+    }
+  }
+
+  const showHint = () => {
+    setHintDialogOpen(true)
+    if (!hintShown && user) {
+      setHintShown(true)
+      setDoc(doc(db, 'users', user.uid, 'attempts', `${id}_${qid}`), {
+        count: attempts,
+        hintShown: true,
+      }, { merge: true }).catch(err => console.error('Error saving hint status:', err))
+    }
+  }
+
   if (!question) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -412,6 +533,61 @@ sys.stdout = StringIO()
                   />
                 )}
               </Typography>
+              <IconButton
+                onClick={toggleMarkForReview}
+                sx={{
+                  ml: 2,
+                  color: marked ? '#FFD700' : 'rgba(255, 255, 255, 0.7)',
+                  border: `1px solid ${marked ? 'rgba(255, 215, 0, 0.3)' : 'rgba(79, 139, 255, 0.3)'}`,
+                  '&:hover': {
+                    background: marked ? 'rgba(255, 215, 0, 0.1)' : 'rgba(79, 139, 255, 0.1)',
+                    border: `1px solid ${marked ? 'rgba(255, 215, 0, 0.5)' : 'rgba(79, 139, 255, 0.5)'}`,
+                  },
+                }}
+                title={marked ? 'Unmark for review' : 'Mark for review'}
+              >
+                {marked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+              </IconButton>
+              {attempts >= 3 && !hintShown && (
+                <Button
+                  startIcon={<LightbulbIcon />}
+                  onClick={showHint}
+                  sx={{
+                    ml: 2,
+                    background: 'linear-gradient(145deg, #FFA500 0%, #FF8C00 100%)',
+                    border: '1px solid rgba(255, 165, 0, 0.3)',
+                    color: '#000',
+                    fontWeight: 700,
+                    '&:hover': {
+                      background: 'linear-gradient(145deg, #FFB347 0%, #FFA500 100%)',
+                      boxShadow: '0 6px 24px rgba(255, 165, 0, 0.3)',
+                    },
+                  }}
+                >
+                  Get Hint
+                </Button>
+              )}
+              {hintShown && (
+                <Button
+                  startIcon={<LightbulbIcon />}
+                  onClick={() => setHintDialogOpen(true)}
+                  sx={{
+                    ml: 2,
+                    background: 'linear-gradient(145deg, #FFA500 0%, #FF8C00 100%)',
+                    border: '1px solid rgba(255, 165, 0, 0.3)',
+                    color: '#000',
+                    fontWeight: 700,
+                    opacity: 0.7,
+                    '&:hover': {
+                      background: 'linear-gradient(145deg, #FFB347 0%, #FFA500 100%)',
+                      boxShadow: '0 6px 24px rgba(255, 165, 0, 0.3)',
+                      opacity: 1,
+                    },
+                  }}
+                >
+                  View Hint
+                </Button>
+              )}
             </Box>
 
             <Grid container spacing={3}>
@@ -699,6 +875,35 @@ sys.stdout = StringIO()
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      <Dialog
+        open={hintDialogOpen}
+        onClose={() => setHintDialogOpen(false)}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            background: 'linear-gradient(145deg, #0f0f0f 0%, #000000 100%)',
+            border: '2px solid rgba(255, 165, 0, 0.3)',
+            boxShadow: '0 12px 40px rgba(255, 165, 0, 0.2)',
+          },
+        }}
+      >
+        <DialogTitle sx={{ color: '#FFA500', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
+          <LightbulbIcon sx={{ color: '#FFA500' }} />
+          Hint
+        </DialogTitle>
+        <DialogContent>
+          <Typography sx={{ color: 'rgba(255, 255, 255, 0.9)', lineHeight: 1.8, fontSize: '1.05rem' }}>
+            {question.hint || 'Think about the problem step by step. Break it down into smaller subproblems and solve each one. Consider edge cases and special conditions.'}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setHintDialogOpen(false)} sx={{ color: '#4F8BFF' }}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   )
 }

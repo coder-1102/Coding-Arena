@@ -15,6 +15,7 @@ export const questions = {
       constraints: "-1000 <= a, b <= 1000",
       sampleInput: "5\n3",
       sampleOutput: "8",
+      hint: "Read two integers using input() and convert them to integers. Simply add them together and print the result. Remember to handle the newline character when reading input.",
       testcases: [
         { input: "5\n3", output: "8\n" },
         { input: "-10\n20", output: "10\n" },
@@ -28,6 +29,7 @@ export const questions = {
       constraints: "-1000 <= n <= 1000",
       sampleInput: "4",
       sampleOutput: "Even",
+      hint: "Use the modulo operator (%) to check if a number is even. If n % 2 == 0, the number is even, otherwise it's odd. This works for both positive and negative numbers.",
       testcases: [
         { input: "4", output: "Even\n" },
         { input: "7", output: "Odd\n" },
@@ -68,6 +70,7 @@ export const questions = {
       constraints: "1 <= n <= 1000",
       sampleInput: "7",
       sampleOutput: "Prime",
+      hint: "A prime number is only divisible by 1 and itself. Check if n is less than 2 (not prime). Then check for divisors from 2 to sqrt(n). If you find any divisor, it's not prime. Otherwise, it's prime.",
       testcases: [
         { input: "7", output: "Prime\n" },
         { input: "4", output: "Not Prime\n" },
@@ -83,6 +86,7 @@ export const questions = {
       constraints: "0 <= n <= 10",
       sampleInput: "5",
       sampleOutput: "120",
+      hint: "Factorial of 0 is 1. For n > 0, multiply all numbers from 1 to n. You can use a loop (for or while) to iterate from 1 to n, multiplying each number. Alternatively, use recursion where factorial(n) = n * factorial(n-1) with base case factorial(0) = 1.",
       testcases: [
         { input: "5", output: "120\n" },
         { input: "0", output: "1\n" },
@@ -287,6 +291,7 @@ export const questions = {
       constraints: "1 <= list length <= 100, -1000 <= elements <= 1000",
       sampleInput: "5\n1 2 3 4 5",
       sampleOutput: "15",
+      hint: "Read the first line to get the count, then read the second line and split it to get the list of numbers. Convert each string to an integer. Use a loop to sum all elements, or use Python's built-in sum() function.",
       testcases: [
         { input: "5\n1 2 3 4 5", output: "15\n" },
         { input: "3\n-1 0 1", output: "0\n" },
@@ -549,6 +554,7 @@ export const questions = {
       constraints: "1 <= length(s) <= 100",
       sampleInput: "hello",
       sampleOutput: "olleh",
+      hint: "You can reverse a string in Python using slicing: s[::-1]. This uses negative step to traverse the string backwards. Alternatively, convert to list, reverse it, and join back, or use a loop to build the reversed string character by character.",
       testcases: [
         { input: "hello", output: "olleh\n" },
         { input: "Python", output: "nohtyP\n" },
@@ -814,6 +820,7 @@ export const questions = {
       constraints: "1 <= length(name) <= 50, 1 <= age <= 120",
       sampleInput: "John\n25",
       sampleOutput: "Name: John, Age: 25",
+      hint: "Define a class using 'class Person:'. Use __init__(self, name, age) to initialize attributes. Create a method get_info(self) that returns a formatted string using f-strings or .format(). Create an instance with Person(name, age) and call the method.",
       testcases: [
         { input: "John\n25", output: "Name: John, Age: 25\n" },
         { input: "Alice\n30", output: "Name: Alice, Age: 30\n" }
@@ -1068,6 +1075,7 @@ export const questions = {
       constraints: "1 <= list length <= 100, -1000 <= elements, target <= 1000",
       sampleInput: "5\n1 3 5 7 9\n5",
       sampleOutput: "2",
+      hint: "Iterate through the list from index 0 to len(list)-1. Compare each element with the target. If found, return the index. If the loop completes without finding the target, return -1. You can also use list.index() method, but handle the ValueError exception if not found.",
       testcases: [
         { input: "5\n1 3 5 7 9\n5", output: "2\n" },
         { input: "4\n10 20 30 40\n25", output: "-1\n" },
