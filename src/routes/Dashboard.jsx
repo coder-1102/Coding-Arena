@@ -18,6 +18,10 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Menu,
+  MenuItem,
+  ListItemText,
+  Divider,
 } from '@mui/material'
 import RestartAltIcon from '@mui/icons-material/RestartAlt'
 import { motion } from 'framer-motion'
@@ -27,6 +31,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [resetDialogOpen, setResetDialogOpen] = useState(false)
   const [resetting, setResetting] = useState(false)
+  const [resetMenuAnchor, setResetMenuAnchor] = useState(null)
+  const [selectedCategory, setSelectedCategory] = useState(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -68,63 +74,61 @@ export default function Dashboard() {
     return () => unsubscribe()
   }, [navigate])
 
-  const handleResetAll = async () => {
+  const handleResetCategory = async (categoryId) => {
     const user = auth.currentUser
     if (!user) return
 
     setResetting(true)
     try {
       const batch = writeBatch(db)
+      const categoryQuestions = questions[categoryId] || []
+      
+      // Get current progress
+      const progressRef = doc(db, 'users', user.uid, 'progress', categoryId)
+      const progressDoc = await getDoc(progressRef)
+      const solvedList = progressDoc.exists() ? (progressDoc.data().solved || []) : []
 
-      // For each category, reset progress and save last solutions
-      for (const category of categories) {
-        const categoryId = category.id
-        const categoryQuestions = questions[categoryId] || []
-        
-        // Get current progress
-        const progressRef = doc(db, 'users', user.uid, 'progress', categoryId)
-        const progressDoc = await getDoc(progressRef)
-        const solvedList = progressDoc.exists() ? (progressDoc.data().solved || []) : []
-
-        // For each solved question, save the current code as last solution
-        for (const qid of solvedList) {
-          const question = categoryQuestions.find(q => q.id === qid)
-          if (question) {
-            // Get current code
-            const codeRef = doc(db, 'users', user.uid, 'codes', qid.toString())
-            const codeDoc = await getDoc(codeRef)
-            
-            if (codeDoc.exists() && codeDoc.data().code) {
-              // Save as last solution
-              const lastSolutionRef = doc(db, 'users', user.uid, 'lastSolutions', `${categoryId}_${qid}`)
-              batch.set(lastSolutionRef, {
-                code: codeDoc.data().code,
-                savedAt: new Date(),
-              })
-            }
-
-            // Clear the code
-            batch.set(codeRef, {
-              code: '# Write your code here\n',
-              updatedAt: new Date(),
-            }, { merge: true })
+      // For each solved question, save the current code as last solution
+      for (const qid of solvedList) {
+        const question = categoryQuestions.find(q => q.id === qid)
+        if (question) {
+          // Get current code
+          const codeRef = doc(db, 'users', user.uid, 'codes', qid.toString())
+          const codeDoc = await getDoc(codeRef)
+          
+          if (codeDoc.exists() && codeDoc.data().code) {
+            // Save as last solution
+            const lastSolutionRef = doc(db, 'users', user.uid, 'lastSolutions', `${categoryId}_${qid}`)
+            batch.set(lastSolutionRef, {
+              code: codeDoc.data().code,
+              savedAt: new Date(),
+            })
           }
-        }
 
-        // Reset progress
-        batch.set(progressRef, {
-          unlocked: categoryId === 'Basics',
-          solved: [],
-          completed: false,
-        }, { merge: true })
+          // Clear the code
+          batch.set(codeRef, {
+            code: '# Write your code here\n',
+            updatedAt: new Date(),
+          }, { merge: true })
+        }
       }
 
-      // Reset attempts
+      // Reset progress
+      batch.set(progressRef, {
+        unlocked: categoryId === 'Basics',
+        solved: [],
+        completed: false,
+      }, { merge: true })
+
+      // Reset attempts for this category
       try {
         const attemptsCollection = collection(db, 'users', user.uid, 'attempts')
         const attemptsSnapshot = await getDocs(attemptsCollection)
-        attemptsSnapshot.forEach((doc) => {
-          batch.delete(doc.ref)
+        attemptsSnapshot.forEach((docSnapshot) => {
+          const attemptKey = docSnapshot.id
+          if (attemptKey.startsWith(`${categoryId}_`)) {
+            batch.delete(docSnapshot.ref)
+          }
         })
       } catch (error) {
         console.error('Error resetting attempts:', error)
@@ -158,12 +162,27 @@ export default function Dashboard() {
 
       setProgress(progressData)
       setResetDialogOpen(false)
+      setSelectedCategory(null)
     } catch (error) {
-      console.error('Error resetting all:', error)
+      console.error('Error resetting category:', error)
       alert('Error resetting. Please try again.')
     } finally {
       setResetting(false)
     }
+  }
+
+  const handleResetMenuClick = (event) => {
+    setResetMenuAnchor(event.currentTarget)
+  }
+
+  const handleResetMenuClose = () => {
+    setResetMenuAnchor(null)
+  }
+
+  const handleCategorySelect = (categoryId) => {
+    setSelectedCategory(categoryId)
+    handleResetMenuClose()
+    setResetDialogOpen(true)
   }
 
   if (loading) {
@@ -218,7 +237,7 @@ export default function Dashboard() {
               </Typography>
               <Button
                 startIcon={<RestartAltIcon />}
-                onClick={() => setResetDialogOpen(true)}
+                onClick={handleResetMenuClick}
                 sx={{
                   background: 'linear-gradient(145deg, #8B0000 0%, #5a0000 100%)',
                   border: '1px solid rgba(255, 0, 0, 0.3)',
@@ -230,8 +249,35 @@ export default function Dashboard() {
                   },
                 }}
               >
-                Reset All
+                Reset
               </Button>
+              <Menu
+                anchorEl={resetMenuAnchor}
+                open={Boolean(resetMenuAnchor)}
+                onClose={handleResetMenuClose}
+                PaperProps={{
+                  sx: {
+                    background: 'linear-gradient(145deg, #0f0f0f 0%, #000000 100%)',
+                    border: '1px solid rgba(255, 0, 0, 0.3)',
+                    minWidth: 250,
+                  },
+                }}
+              >
+                {categories.map((category) => (
+                  <MenuItem
+                    key={category.id}
+                    onClick={() => handleCategorySelect(category.id)}
+                    sx={{
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      '&:hover': {
+                        background: 'rgba(255, 0, 0, 0.1)',
+                      },
+                    }}
+                  >
+                    <ListItemText primary={category.name} />
+                  </MenuItem>
+                ))}
+              </Menu>
             </Box>
             <Grid container spacing={3}>
               {categories.map((category, index) => (
@@ -261,31 +307,34 @@ export default function Dashboard() {
         }}
       >
         <DialogTitle sx={{ color: '#ff4444', fontWeight: 700 }}>
-          Reset All Progress
+          Reset {selectedCategory ? categories.find(c => c.id === selectedCategory)?.name : 'Category'} Progress
         </DialogTitle>
         <DialogContent>
           <DialogContentText sx={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-            Are you sure you want to reset all your progress? This will:
+            Are you sure you want to reset progress for <strong>{selectedCategory ? categories.find(c => c.id === selectedCategory)?.name : 'this category'}</strong>? This will:
             <ul style={{ marginTop: '10px', paddingLeft: '20px' }}>
-              <li>Clear all solved statuses</li>
-              <li>Clear all your code solutions</li>
+              <li>Clear all solved statuses in this category</li>
+              <li>Clear all your code solutions for this category</li>
               <li>Save your current solutions as "Last Solution" (you can view them later)</li>
-              <li>Reset all attempt counts</li>
+              <li>Reset all attempt counts for this category</li>
             </ul>
             <strong style={{ color: '#ff4444' }}>This action cannot be undone!</strong>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button 
-            onClick={() => setResetDialogOpen(false)} 
+            onClick={() => {
+              setResetDialogOpen(false)
+              setSelectedCategory(null)
+            }} 
             disabled={resetting}
             sx={{ color: '#4F8BFF' }}
           >
             Cancel
           </Button>
           <Button 
-            onClick={handleResetAll} 
-            disabled={resetting}
+            onClick={() => selectedCategory && handleResetCategory(selectedCategory)} 
+            disabled={resetting || !selectedCategory}
             sx={{ 
               color: '#ff4444',
               '&:hover': {
@@ -293,7 +342,7 @@ export default function Dashboard() {
               },
             }}
           >
-            {resetting ? 'Resetting...' : 'Reset All'}
+            {resetting ? 'Resetting...' : 'Reset'}
           </Button>
         </DialogActions>
       </Dialog>

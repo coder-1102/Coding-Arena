@@ -14,15 +14,19 @@ import {
   CircularProgress,
   Alert,
   Paper,
+  Tabs,
+  Tab,
 } from '@mui/material'
 import BookmarkIcon from '@mui/icons-material/Bookmark'
 import { motion } from 'framer-motion'
+import { categories } from '../data/questions'
 
 export default function MarkedQuestionsPage() {
   const navigate = useNavigate()
   const [markedQuestions, setMarkedQuestions] = useState([])
   const [loading, setLoading] = useState(true)
   const [progress, setProgress] = useState({})
+  const [selectedCategory, setSelectedCategory] = useState('all')
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -37,17 +41,26 @@ export default function MarkedQuestionsPage() {
         const markedData = markedDoc.exists() ? markedDoc.data() : {}
         
         // Extract marked questions
+        // Format: key is "categoryId_questionId", value is true/false
+        // Also has metadata: "categoryId_questionId_category" and "categoryId_questionId_qid"
         const marked = []
+        const processedKeys = new Set()
+        
         for (const key in markedData) {
-          if (key.endsWith('_category')) {
-            const categoryId = markedData[key]
-            const qidKey = key.replace('_category', '_qid')
-            const qid = markedData[qidKey]
-            
-            if (categoryId && qid && questions[categoryId]) {
-              const question = questions[categoryId].find(q => q.id === qid)
-              if (question) {
-                marked.push({ question, categoryId, qid })
+          // Check if this is a main marked question key (ends with _category means it's metadata)
+          if (!key.endsWith('_category') && !key.endsWith('_qid') && markedData[key] === true) {
+            // Parse "categoryId_questionId" format
+            const parts = key.split('_')
+            if (parts.length >= 2) {
+              const categoryId = parts[0]
+              const qid = parseInt(parts.slice(1).join('_')) // Handle multi-digit IDs
+              
+              if (categoryId && qid && questions[categoryId] && !processedKeys.has(key)) {
+                const question = questions[categoryId].find(q => q.id === qid)
+                if (question) {
+                  marked.push({ question, categoryId, qid })
+                  processedKeys.add(key)
+                }
               }
             }
           }
@@ -153,20 +166,76 @@ export default function MarkedQuestionsPage() {
               </Paper>
             ) : (
               <>
+                <Box sx={{ mb: 3, position: 'relative', zIndex: 1 }}>
+                  <Tabs
+                    value={selectedCategory}
+                    onChange={(e, newValue) => setSelectedCategory(newValue)}
+                    sx={{
+                      borderBottom: '1px solid rgba(79, 139, 255, 0.2)',
+                      '& .MuiTab-root': {
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontWeight: 500,
+                        textTransform: 'none',
+                        fontSize: '0.95rem',
+                        '&.Mui-selected': {
+                          color: '#FFD700',
+                          fontWeight: 700,
+                        },
+                      },
+                      '& .MuiTabs-indicator': {
+                        backgroundColor: '#FFD700',
+                      },
+                    }}
+                  >
+                    <Tab label={`All (${markedQuestions.length})`} value="all" />
+                    {categories.map((category) => {
+                      const categoryCount = markedQuestions.filter(
+                        (mq) => mq.categoryId === category.id
+                      ).length
+                      if (categoryCount > 0) {
+                        return (
+                          <Tab
+                            key={category.id}
+                            label={`${category.name} (${categoryCount})`}
+                            value={category.id}
+                          />
+                        )
+                      }
+                      return null
+                    })}
+                  </Tabs>
+                </Box>
+
                 <Typography variant="body1" sx={{ mb: 4, color: 'rgba(255, 255, 255, 0.7)' }}>
-                  {markedQuestions.length} question{markedQuestions.length !== 1 ? 's' : ''} marked for review
+                  {selectedCategory === 'all'
+                    ? `${markedQuestions.length} question${markedQuestions.length !== 1 ? 's' : ''} marked for review`
+                    : `${markedQuestions.filter((mq) => mq.categoryId === selectedCategory).length} question${markedQuestions.filter((mq) => mq.categoryId === selectedCategory).length !== 1 ? 's' : ''} in ${categories.find((c) => c.id === selectedCategory)?.name || selectedCategory}`}
                 </Typography>
+
                 <Grid container spacing={3}>
-                  {markedQuestions.map(({ question, categoryId, qid }) => (
-                    <Grid item xs={12} key={`${categoryId}_${qid}`}>
-                      <QuestionCard
-                        question={question}
-                        categoryId={categoryId}
-                        solved={progress[categoryId]?.solved?.includes(question.id) || false}
-                        marked={true}
-                      />
-                    </Grid>
-                  ))}
+                  {selectedCategory === 'all'
+                    ? markedQuestions.map(({ question, categoryId, qid }) => (
+                        <Grid item xs={12} key={`${categoryId}_${qid}`}>
+                          <QuestionCard
+                            question={question}
+                            categoryId={categoryId}
+                            solved={progress[categoryId]?.solved?.includes(question.id) || false}
+                            marked={true}
+                          />
+                        </Grid>
+                      ))
+                    : markedQuestions
+                        .filter((mq) => mq.categoryId === selectedCategory)
+                        .map(({ question, categoryId, qid }) => (
+                          <Grid item xs={12} key={`${categoryId}_${qid}`}>
+                            <QuestionCard
+                              question={question}
+                              categoryId={categoryId}
+                              solved={progress[categoryId]?.solved?.includes(question.id) || false}
+                              marked={true}
+                            />
+                          </Grid>
+                        ))}
                 </Grid>
               </>
             )}
