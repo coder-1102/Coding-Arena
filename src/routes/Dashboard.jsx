@@ -52,7 +52,7 @@ export default function Dashboard() {
           } else {
             // Initialize if doesn't exist
             progressData[category.id] = {
-              unlocked: category.id === 'Basics',
+              unlocked: category.id === 'Basics' || category.id.startsWith('SQL_'),
               solved: [],
               completed: false,
             }
@@ -60,7 +60,7 @@ export default function Dashboard() {
         } catch (error) {
           console.error(`Error fetching progress for ${category.id}:`, error)
           progressData[category.id] = {
-            unlocked: category.id === 'Basics',
+            unlocked: category.id === 'Basics' || category.id.startsWith('SQL_'),
             solved: [],
             completed: false,
           }
@@ -106,8 +106,11 @@ export default function Dashboard() {
           }
 
           // Clear the code
+          const defaultCode = categoryId.startsWith('SQL_') 
+            ? '-- Write your SQL query here\nSELECT * FROM employees;'
+            : '# Write your code here\n'
           batch.set(codeRef, {
-            code: '# Write your code here\n',
+            code: defaultCode,
             updatedAt: new Date(),
           }, { merge: true })
         }
@@ -115,7 +118,7 @@ export default function Dashboard() {
 
       // Reset progress
       batch.set(progressRef, {
-        unlocked: categoryId === 'Basics',
+        unlocked: categoryId === 'Basics' || categoryId.startsWith('SQL_'),
         solved: [],
         completed: false,
       }, { merge: true })
@@ -145,7 +148,7 @@ export default function Dashboard() {
             progressData[category.id] = progressDoc.data()
           } else {
             progressData[category.id] = {
-              unlocked: category.id === 'Basics',
+              unlocked: category.id === 'Basics' || category.id.startsWith('SQL_'),
               solved: [],
               completed: false,
             }
@@ -153,7 +156,7 @@ export default function Dashboard() {
         } catch (error) {
           console.error(`Error fetching progress for ${category.id}:`, error)
           progressData[category.id] = {
-            unlocked: category.id === 'Basics',
+            unlocked: category.id === 'Basics' || category.id.startsWith('SQL_'),
             solved: [],
             completed: false,
           }

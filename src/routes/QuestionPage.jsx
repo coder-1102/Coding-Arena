@@ -128,6 +128,13 @@ export default function QuestionPage() {
         const codeDoc = await getDoc(doc(db, 'users', currentUser.uid, 'codes', qid))
         if (codeDoc.exists() && codeDoc.data().code) {
           setCode(codeDoc.data().code)
+        } else {
+          // Set default code if no saved code
+          if (id && id.startsWith('SQL_')) {
+            setCode('-- Write your SQL query here\nSELECT * FROM employees;')
+          } else {
+            setCode('# Write your code here\n')
+          }
         }
       } catch (error) {
         console.error('Error loading code:', error)
@@ -205,6 +212,9 @@ export default function QuestionPage() {
     await saveCode()
 
     try {
+      // Detect if it's SQL category
+      const isSQL = id && id.startsWith('SQL_')
+      
       // Try backend first
       const response = await fetch('http://localhost:5000/api/run', {
         method: 'POST',
@@ -214,6 +224,7 @@ export default function QuestionPage() {
         body: JSON.stringify({
           code,
           testcases: question.testcases,
+          language: isSQL ? 'sql' : 'python',
         }),
       })
 
@@ -259,7 +270,23 @@ export default function QuestionPage() {
         throw new Error('Backend error')
       }
     } catch (error) {
-      // Fallback to Pyodide
+      // Fallback to Pyodide (only for Python, not SQL)
+      const isSQL = id && id.startsWith('SQL_')
+      if (isSQL) {
+        setSnackbar({
+          open: true,
+          message: 'SQL execution requires backend server. Please ensure the server is running.',
+          severity: 'error',
+        })
+        setResults([{
+          passed: false,
+          expected: 'N/A',
+          got: `Backend Error: ${error.message}. SQL execution requires the backend server.`,
+        }])
+        setLoading(false)
+        return
+      }
+      
       console.log('Backend unavailable, using Pyodide fallback')
       try {
         const pyodide = await loadPyodideInstance()
@@ -400,9 +427,10 @@ sys.stdout = StringIO()
 
       // Unlock next category if completed
       if (allSolved) {
-        const categoryIndex = ['Basics', 'Lists', 'Strings', 'OOP', 'DSA'].indexOf(id)
-        if (categoryIndex < 4) {
-          const nextCategory = ['Basics', 'Lists', 'Strings', 'OOP', 'DSA'][categoryIndex + 1]
+        const allCategories = ['Basics', 'Lists', 'Strings', 'OOP', 'DSA', 'SQL_Basics', 'SQL_Intermediate', 'SQL_Advanced']
+        const categoryIndex = allCategories.indexOf(id)
+        if (categoryIndex < allCategories.length - 1) {
+          const nextCategory = allCategories[categoryIndex + 1]
           await setDoc(doc(db, 'users', user.uid, 'progress', nextCategory), {
             unlocked: true,
             solved: [],
@@ -933,7 +961,12 @@ sys.stdout = StringIO()
                       },
                     }}
                   >
-                    <CodeEditor code={code} onChange={setCode} onRun={() => runCode(false)} />
+                    <CodeEditor 
+                      code={code} 
+                      onChange={setCode} 
+                      onRun={() => runCode(false)} 
+                      language={id && id.startsWith('SQL_') ? 'sql' : 'python'}
+                    />
                   </Box>
                   <Box 
                     sx={{ 

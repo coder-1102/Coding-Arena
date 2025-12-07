@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import Editor from '@monaco-editor/react'
 import { Box } from '@mui/material'
 
-export default function CodeEditor({ code, onChange, onRun }) {
+export default function CodeEditor({ code, onChange, onRun, language = 'python' }) {
   const editorRef = useRef(null)
 
   useEffect(() => {
@@ -64,7 +64,8 @@ export default function CodeEditor({ code, onChange, onRun }) {
     >
       <Editor
         height="100%"
-        defaultLanguage="python"
+        defaultLanguage={language}
+        language={language}
         value={code}
         onChange={onChange}
         onMount={handleEditorDidMount}

@@ -40,7 +40,7 @@ export default function CategoryPage() {
           setProgress(data)
           setUnlocked(data.unlocked)
         } else {
-          setUnlocked(id === 'Basics')
+          setUnlocked(id === 'Basics' || id.startsWith('SQL_'))
           setProgress({ solved: [], completed: false })
         }
 
@@ -66,7 +66,7 @@ export default function CategoryPage() {
         }
       } catch (error) {
         console.error('Error fetching progress:', error)
-        setUnlocked(id === 'Basics')
+        setUnlocked(id === 'Basics' || id === 'SQL_Basics')
         setProgress({ solved: [], completed: false })
       } finally {
         setLoading(false)

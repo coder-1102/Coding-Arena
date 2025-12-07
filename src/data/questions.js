@@ -3,7 +3,10 @@ export const categories = [
   { id: 'Lists', name: 'Lists & Arrays', total: 20 },
   { id: 'Strings', name: 'String Manipulation', total: 20 },
   { id: 'OOP', name: 'Object-Oriented Programming', total: 20 },
-  { id: 'DSA', name: 'Data Structures & Algorithms', total: 20 }
+  { id: 'DSA', name: 'Data Structures & Algorithms', total: 20 },
+  { id: 'SQL_Basics', name: 'SQL Basics', total: 18 },
+  { id: 'SQL_Intermediate', name: 'SQL Intermediate', total: 18 },
+  { id: 'SQL_Advanced', name: 'SQL Advanced', total: 18 }
 ];
 
 export const questions = {
@@ -183,6 +186,7 @@ export const questions = {
       constraints: "1 <= a, b <= 1000",
       sampleInput: "48\n18",
       sampleOutput: "6",
+      hint: "Use the Euclidean algorithm: while b != 0, set (a, b) = (b, a % b). The GCD is the final value of a. Alternatively, use math.gcd(a, b) if allowed. Make sure your loop has a proper termination condition to avoid infinite loops.",
       testcases: [
         { input: "48\n18", output: "6\n" },
         { input: "17\n13", output: "1\n" },
@@ -1322,6 +1326,660 @@ export const questions = {
       testcases: [
         { input: "6\n-1 0 1 2 -1 -4", output: "-1 -1 2\n-1 0 1\n" },
         { input: "3\n0 0 0", output: "0 0 0\n" }
+      ]
+    }
+  ],
+  SQL_Basics: [
+    {
+      id: 101,
+      title: "Select All Columns",
+      description: "Write a SQL query to select all columns from the 'employees' table.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);",
+      sampleOutput: "1|John|IT|5000\n2|Jane|HR|4500",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);", output: "1|John|IT|5000\n2|Jane|HR|4500\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'Finance', 6000);", output: "1|Alice|Finance|6000\n" }
+      ]
+    },
+    {
+      id: 102,
+      title: "Select Specific Columns",
+      description: "Write a SQL query to select only 'name' and 'salary' columns from the 'employees' table.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);",
+      sampleOutput: "John|5000\nJane|4500",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);", output: "John|5000\nJane|4500\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'Finance', 6000);", output: "Alice|6000\n" }
+      ]
+    },
+    {
+      id: 103,
+      title: "Filter with WHERE Clause",
+      description: "Write a SQL query to select all employees from the 'IT' department.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'IT', 5500);",
+      sampleOutput: "1|John|IT|5000\n3|Bob|IT|5500",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'IT', 5500);", output: "1|John|IT|5000\n3|Bob|IT|5500\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'Finance', 6000);\nINSERT INTO employees VALUES (2, 'Bob', 'IT', 5000);", output: "2|Bob|IT|5000\n" }
+      ]
+    },
+    {
+      id: 104,
+      title: "Filter with Numeric Comparison",
+      description: "Write a SQL query to select all employees with salary greater than 5000.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);",
+      sampleOutput: "2|Jane|HR|6000\n3|Bob|Finance|5500",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);", output: "2|Jane|HR|6000\n3|Bob|Finance|5500\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4500);", output: "\n" }
+      ]
+    },
+    {
+      id: 105,
+      title: "Sort with ORDER BY",
+      description: "Write a SQL query to select all employees ordered by salary in descending order.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 4500);",
+      sampleOutput: "2|Jane|HR|6000\n1|John|IT|5000\n3|Bob|Finance|4500",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 4500);", output: "2|Jane|HR|6000\n1|John|IT|5000\n3|Bob|Finance|4500\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);\nINSERT INTO employees VALUES (2, 'Bob', 'HR', 5000);", output: "2|Bob|HR|5000\n1|Alice|IT|4000\n" }
+      ]
+    },
+    {
+      id: 106,
+      title: "Count Records",
+      description: "Write a SQL query to count the total number of employees.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);",
+      sampleOutput: "3",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);", output: "3\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);", output: "1\n" }
+      ]
+    },
+    {
+      id: 107,
+      title: "Calculate Average",
+      description: "Write a SQL query to calculate the average salary of all employees.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);",
+      sampleOutput: "5000.0",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);", output: "5000.0\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);\nINSERT INTO employees VALUES (2, 'Bob', 'HR', 6000);", output: "5000.0\n" }
+      ]
+    },
+    {
+      id: 108,
+      title: "Find Maximum Value",
+      description: "Write a SQL query to find the maximum salary from the employees table.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);",
+      sampleOutput: "6000",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);", output: "6000\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);", output: "4000\n" }
+      ]
+    },
+    {
+      id: 109,
+      title: "Find Minimum Value",
+      description: "Write a SQL query to find the minimum salary from the employees table.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);",
+      sampleOutput: "4500",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);", output: "4500\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 6000);", output: "6000\n" }
+      ]
+    },
+    {
+      id: 110,
+      title: "Sum Values",
+      description: "Write a SQL query to calculate the sum of all salaries.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);",
+      sampleOutput: "15000",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);", output: "15000\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);\nINSERT INTO employees VALUES (2, 'Bob', 'HR', 6000);", output: "10000\n" }
+      ]
+    },
+    {
+      id: 111,
+      title: "Filter with AND Condition",
+      description: "Write a SQL query to select employees from 'IT' department with salary greater than 5000.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'IT', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'HR', 5500);",
+      sampleOutput: "2|Jane|IT|6000",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'IT', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'HR', 5500);", output: "2|Jane|IT|6000\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4500);", output: "\n" }
+      ]
+    },
+    {
+      id: 112,
+      title: "Filter with OR Condition",
+      description: "Write a SQL query to select employees from either 'IT' or 'HR' department.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);",
+      sampleOutput: "1|John|IT|5000\n2|Jane|HR|4500",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);", output: "1|John|IT|5000\n2|Jane|HR|4500\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'Finance', 4000);", output: "\n" }
+      ]
+    },
+    {
+      id: 113,
+      title: "Filter with LIKE Pattern",
+      description: "Write a SQL query to select employees whose name starts with 'J'.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);",
+      sampleOutput: "1|John|IT|5000\n2|Jane|HR|4500",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);", output: "1|John|IT|5000\n2|Jane|HR|4500\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);", output: "\n" }
+      ]
+    },
+    {
+      id: 114,
+      title: "Limit Results",
+      description: "Write a SQL query to select the top 2 employees ordered by salary in descending order.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);",
+      sampleOutput: "2|Jane|HR|6000\n3|Bob|Finance|5500",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);", output: "2|Jane|HR|6000\n3|Bob|Finance|5500\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);", output: "1|Alice|IT|4000\n" }
+      ]
+    },
+    {
+      id: 115,
+      title: "Group By Department",
+      description: "Write a SQL query to count employees in each department.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'IT', 5500);",
+      sampleOutput: "HR|1\nIT|2",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'IT', 5500);", output: "HR|1\nIT|2\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'Finance', 4000);\nINSERT INTO employees VALUES (2, 'Bob', 'Finance', 5000);", output: "Finance|2\n" }
+      ]
+    },
+    {
+      id: 116,
+      title: "Average Salary by Department",
+      description: "Write a SQL query to calculate the average salary for each department.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'IT', 6000);",
+      sampleOutput: "HR|4500.0\nIT|5500.0",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'IT', 6000);", output: "HR|4500.0\nIT|5500.0\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'Finance', 4000);\nINSERT INTO employees VALUES (2, 'Bob', 'Finance', 6000);", output: "Finance|5000.0\n" }
+      ]
+    },
+    {
+      id: 117,
+      title: "Filter NULL Values",
+      description: "Write a SQL query to select all employees where the department is not NULL.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', NULL, 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);",
+      sampleOutput: "1|John|IT|5000\n3|Bob|Finance|5500",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', NULL, 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);", output: "1|John|IT|5000\n3|Bob|Finance|5500\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', NULL, 4000);", output: "\n" }
+      ]
+    },
+    {
+      id: 118,
+      title: "Distinct Values",
+      description: "Write a SQL query to select all distinct departments from the employees table.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'IT', 5500);",
+      sampleOutput: "HR\nIT",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'IT', 5500);", output: "HR\nIT\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'Finance', 4000);\nINSERT INTO employees VALUES (2, 'Bob', 'Finance', 5000);", output: "Finance\n" }
+      ]
+    }
+  ],
+  SQL_Intermediate: [
+    {
+      id: 119,
+      title: "Inner Join Two Tables",
+      description: "Write a SQL query to join 'employees' and 'departments' tables on department_id to get employee names and department names.",
+      constraints: "Tables: employees (id, name, department_id), departments (id, name)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department_id INT);\nCREATE TABLE departments (id INT, name VARCHAR(50));\nINSERT INTO departments VALUES (1, 'IT');\nINSERT INTO departments VALUES (2, 'HR');\nINSERT INTO employees VALUES (1, 'John', 1);\nINSERT INTO employees VALUES (2, 'Jane', 2);",
+      sampleOutput: "John|IT\nJane|HR",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department_id INT);\nCREATE TABLE departments (id INT, name VARCHAR(50));\nINSERT INTO departments VALUES (1, 'IT');\nINSERT INTO departments VALUES (2, 'HR');\nINSERT INTO employees VALUES (1, 'John', 1);\nINSERT INTO employees VALUES (2, 'Jane', 2);", output: "John|IT\nJane|HR\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department_id INT);\nCREATE TABLE departments (id INT, name VARCHAR(50));\nINSERT INTO departments VALUES (1, 'Finance');\nINSERT INTO employees VALUES (1, 'Alice', 1);", output: "Alice|Finance\n" }
+      ]
+    },
+    {
+      id: 120,
+      title: "Left Join",
+      description: "Write a SQL query to perform a LEFT JOIN between 'employees' and 'departments' tables.",
+      constraints: "Tables: employees (id, name, department_id), departments (id, name)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department_id INT);\nCREATE TABLE departments (id INT, name VARCHAR(50));\nINSERT INTO departments VALUES (1, 'IT');\nINSERT INTO employees VALUES (1, 'John', 1);\nINSERT INTO employees VALUES (2, 'Jane', NULL);",
+      sampleOutput: "John|IT\nJane|",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department_id INT);\nCREATE TABLE departments (id INT, name VARCHAR(50));\nINSERT INTO departments VALUES (1, 'IT');\nINSERT INTO employees VALUES (1, 'John', 1);\nINSERT INTO employees VALUES (2, 'Jane', NULL);", output: "John|IT\nJane|\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department_id INT);\nCREATE TABLE departments (id INT, name VARCHAR(50));\nINSERT INTO departments VALUES (1, 'HR');\nINSERT INTO employees VALUES (1, 'Alice', 1);", output: "Alice|HR\n" }
+      ]
+    },
+    {
+      id: 121,
+      title: "Subquery in WHERE",
+      description: "Write a SQL query to find employees with salary greater than the average salary.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 4000);",
+      sampleOutput: "2|Jane|HR|6000",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 4000);", output: "2|Jane|HR|6000\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);\nINSERT INTO employees VALUES (2, 'Bob', 'HR', 5000);", output: "2|Bob|HR|5000\n" }
+      ]
+    },
+    {
+      id: 122,
+      title: "HAVING Clause",
+      description: "Write a SQL query to find departments with more than 1 employee.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'IT', 5500);",
+      sampleOutput: "IT|2",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'IT', 5500);", output: "IT|2\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'Finance', 4000);\nINSERT INTO employees VALUES (2, 'Bob', 'Finance', 5000);\nINSERT INTO employees VALUES (3, 'Charlie', 'Finance', 6000);", output: "Finance|3\n" }
+      ]
+    },
+    {
+      id: 123,
+      title: "Multiple Conditions with AND/OR",
+      description: "Write a SQL query to select employees from 'IT' or 'HR' department with salary between 4500 and 5500.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'IT', 6000);",
+      sampleOutput: "1|John|IT|5000\n2|Jane|HR|4500",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'IT', 6000);", output: "1|John|IT|5000\n2|Jane|HR|4500\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'Finance', 4000);", output: "\n" }
+      ]
+    },
+    {
+      id: 124,
+      title: "IN Clause",
+      description: "Write a SQL query to select employees whose department is in ('IT', 'HR', 'Finance').",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Sales', 5500);",
+      sampleOutput: "1|John|IT|5000\n2|Jane|HR|4500",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Sales', 5500);", output: "1|John|IT|5000\n2|Jane|HR|4500\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'Marketing', 4000);", output: "\n" }
+      ]
+    },
+    {
+      id: 125,
+      title: "BETWEEN Clause",
+      description: "Write a SQL query to select employees with salary between 4500 and 5500 (inclusive).",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 4500);",
+      sampleOutput: "1|John|IT|5000\n3|Bob|Finance|4500",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 4500);", output: "1|John|IT|5000\n3|Bob|Finance|4500\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);", output: "\n" }
+      ]
+    },
+    {
+      id: 126,
+      title: "CASE Statement",
+      description: "Write a SQL query to categorize employees as 'High', 'Medium', or 'Low' based on salary (>6000, 4000-6000, <4000).",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 7000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 3500);",
+      sampleOutput: "John|Medium\nJane|High\nBob|Low",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 7000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 3500);", output: "John|Medium\nJane|High\nBob|Low\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4500);", output: "Alice|Medium\n" }
+      ]
+    },
+    {
+      id: 127,
+      title: "Self Join",
+      description: "Write a SQL query to find employees and their managers (where manager_id references employee id).",
+      constraints: "Table: employees (id, name, manager_id)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), manager_id INT);\nINSERT INTO employees VALUES (1, 'John', NULL);\nINSERT INTO employees VALUES (2, 'Jane', 1);\nINSERT INTO employees VALUES (3, 'Bob', 1);",
+      sampleOutput: "Jane|John\nBob|John",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), manager_id INT);\nINSERT INTO employees VALUES (1, 'John', NULL);\nINSERT INTO employees VALUES (2, 'Jane', 1);\nINSERT INTO employees VALUES (3, 'Bob', 1);", output: "Jane|John\nBob|John\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), manager_id INT);\nINSERT INTO employees VALUES (1, 'Alice', NULL);\nINSERT INTO employees VALUES (2, 'Bob', 1);", output: "Bob|Alice\n" }
+      ]
+    },
+    {
+      id: 128,
+      title: "Union",
+      description: "Write a SQL query to combine results from two tables using UNION.",
+      constraints: "Tables: employees (id, name), contractors (id, name)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE contractors (id INT, name VARCHAR(50));\nINSERT INTO employees VALUES (1, 'John');\nINSERT INTO employees VALUES (2, 'Jane');\nINSERT INTO contractors VALUES (3, 'Bob');",
+      sampleOutput: "John\nJane\nBob",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE contractors (id INT, name VARCHAR(50));\nINSERT INTO employees VALUES (1, 'John');\nINSERT INTO employees VALUES (2, 'Jane');\nINSERT INTO contractors VALUES (3, 'Bob');", output: "John\nJane\nBob\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE contractors (id INT, name VARCHAR(50));\nINSERT INTO employees VALUES (1, 'Alice');", output: "Alice\n" }
+      ]
+    },
+    {
+      id: 129,
+      title: "Exists Subquery",
+      description: "Write a SQL query to find employees who have at least one order in the orders table.",
+      constraints: "Tables: employees (id, name), orders (id, employee_id, amount)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE orders (id INT, employee_id INT, amount INT);\nINSERT INTO employees VALUES (1, 'John');\nINSERT INTO employees VALUES (2, 'Jane');\nINSERT INTO orders VALUES (1, 1, 100);\nINSERT INTO orders VALUES (2, 1, 200);",
+      sampleOutput: "1|John",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE orders (id INT, employee_id INT, amount INT);\nINSERT INTO employees VALUES (1, 'John');\nINSERT INTO employees VALUES (2, 'Jane');\nINSERT INTO orders VALUES (1, 1, 100);\nINSERT INTO orders VALUES (2, 1, 200);", output: "1|John\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE orders (id INT, employee_id INT, amount INT);\nINSERT INTO employees VALUES (1, 'Alice');\nINSERT INTO orders VALUES (1, 1, 100);", output: "1|Alice\n" }
+      ]
+    },
+    {
+      id: 130,
+      title: "Not In Subquery",
+      description: "Write a SQL query to find employees who do not have any orders.",
+      constraints: "Tables: employees (id, name), orders (id, employee_id, amount)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE orders (id INT, employee_id INT, amount INT);\nINSERT INTO employees VALUES (1, 'John');\nINSERT INTO employees VALUES (2, 'Jane');\nINSERT INTO orders VALUES (1, 1, 100);",
+      sampleOutput: "2|Jane",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE orders (id INT, employee_id INT, amount INT);\nINSERT INTO employees VALUES (1, 'John');\nINSERT INTO employees VALUES (2, 'Jane');\nINSERT INTO orders VALUES (1, 1, 100);", output: "2|Jane\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE orders (id INT, employee_id INT, amount INT);\nINSERT INTO employees VALUES (1, 'Alice');\nINSERT INTO orders VALUES (1, 1, 100);", output: "\n" }
+      ]
+    },
+    {
+      id: 131,
+      title: "Aggregate with Multiple Groups",
+      description: "Write a SQL query to find the maximum salary in each department.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'IT', 6000);",
+      sampleOutput: "HR|4500\nIT|6000",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'IT', 6000);", output: "HR|4500\nIT|6000\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'Finance', 4000);\nINSERT INTO employees VALUES (2, 'Bob', 'Finance', 5000);", output: "Finance|5000\n" }
+      ]
+    },
+    {
+      id: 132,
+      title: "String Functions - CONCAT",
+      description: "Write a SQL query to concatenate employee name and department with a separator.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);",
+      sampleOutput: "John - IT\nJane - HR",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);", output: "John - IT\nJane - HR\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'Finance', 4000);", output: "Alice - Finance\n" }
+      ]
+    },
+    {
+      id: 133,
+      title: "Date Functions",
+      description: "Write a SQL query to find employees hired in the year 2023.",
+      constraints: "Table: employees (id, name, hire_date)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), hire_date DATE);\nINSERT INTO employees VALUES (1, 'John', '2023-01-15');\nINSERT INTO employees VALUES (2, 'Jane', '2022-06-20');\nINSERT INTO employees VALUES (3, 'Bob', '2023-12-01');",
+      sampleOutput: "1|John|2023-01-15\n3|Bob|2023-12-01",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), hire_date DATE);\nINSERT INTO employees VALUES (1, 'John', '2023-01-15');\nINSERT INTO employees VALUES (2, 'Jane', '2022-06-20');\nINSERT INTO employees VALUES (3, 'Bob', '2023-12-01');", output: "1|John|2023-01-15\n3|Bob|2023-12-01\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), hire_date DATE);\nINSERT INTO employees VALUES (1, 'Alice', '2022-01-01');", output: "\n" }
+      ]
+    },
+    {
+      id: 134,
+      title: "Window Function - ROW_NUMBER",
+      description: "Write a SQL query to assign row numbers to employees ordered by salary descending.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);",
+      sampleOutput: "2|Jane|HR|6000|1\n3|Bob|Finance|5500|2\n1|John|IT|5000|3",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);", output: "2|Jane|HR|6000|1\n3|Bob|Finance|5500|2\n1|John|IT|5000|3\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);", output: "1|Alice|IT|4000|1\n" }
+      ]
+    },
+    {
+      id: 135,
+      title: "Window Function - RANK",
+      description: "Write a SQL query to rank employees by salary using RANK() window function.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5000);",
+      sampleOutput: "2|Jane|HR|6000|1\n1|John|IT|5000|2\n3|Bob|Finance|5000|2",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5000);", output: "2|Jane|HR|6000|1\n1|John|IT|5000|2\n3|Bob|Finance|5000|2\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);", output: "1|Alice|IT|4000|1\n" }
+      ]
+    },
+    {
+      id: 136,
+      title: "Multiple Joins",
+      description: "Write a SQL query to join three tables: employees, departments, and locations.",
+      constraints: "Tables: employees (id, name, department_id), departments (id, name, location_id), locations (id, city)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department_id INT);\nCREATE TABLE departments (id INT, name VARCHAR(50), location_id INT);\nCREATE TABLE locations (id INT, city VARCHAR(50));\nINSERT INTO locations VALUES (1, 'New York');\nINSERT INTO departments VALUES (1, 'IT', 1);\nINSERT INTO employees VALUES (1, 'John', 1);",
+      sampleOutput: "John|IT|New York",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department_id INT);\nCREATE TABLE departments (id INT, name VARCHAR(50), location_id INT);\nCREATE TABLE locations (id INT, city VARCHAR(50));\nINSERT INTO locations VALUES (1, 'New York');\nINSERT INTO departments VALUES (1, 'IT', 1);\nINSERT INTO employees VALUES (1, 'John', 1);", output: "John|IT|New York\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department_id INT);\nCREATE TABLE departments (id INT, name VARCHAR(50), location_id INT);\nCREATE TABLE locations (id INT, city VARCHAR(50));\nINSERT INTO locations VALUES (1, 'London');\nINSERT INTO departments VALUES (1, 'HR', 1);\nINSERT INTO employees VALUES (1, 'Alice', 1);", output: "Alice|HR|London\n" }
+      ]
+    }
+  ],
+  SQL_Advanced: [
+    {
+      id: 137,
+      title: "CTE - Common Table Expression",
+      description: "Write a SQL query using CTE to find employees with salary above average.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 4000);",
+      sampleOutput: "2|Jane|HR|6000",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 4000);", output: "2|Jane|HR|6000\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);\nINSERT INTO employees VALUES (2, 'Bob', 'HR', 5000);", output: "2|Bob|HR|5000\n" }
+      ]
+    },
+    {
+      id: 138,
+      title: "Recursive CTE",
+      description: "Write a SQL query using recursive CTE to find all subordinates of a manager.",
+      constraints: "Table: employees (id, name, manager_id)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), manager_id INT);\nINSERT INTO employees VALUES (1, 'John', NULL);\nINSERT INTO employees VALUES (2, 'Jane', 1);\nINSERT INTO employees VALUES (3, 'Bob', 2);",
+      sampleOutput: "Jane|1\nBob|1",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), manager_id INT);\nINSERT INTO employees VALUES (1, 'John', NULL);\nINSERT INTO employees VALUES (2, 'Jane', 1);\nINSERT INTO employees VALUES (3, 'Bob', 2);", output: "Jane|1\nBob|1\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), manager_id INT);\nINSERT INTO employees VALUES (1, 'Alice', NULL);\nINSERT INTO employees VALUES (2, 'Bob', 1);", output: "Bob|1\n" }
+      ]
+    },
+    {
+      id: 139,
+      title: "PIVOT Operation",
+      description: "Write a SQL query to pivot department salaries into columns.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'IT', 6000);",
+      sampleOutput: "HR|4500.0\nIT|5500.0",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'IT', 6000);", output: "HR|4500.0\nIT|5500.0\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'Finance', 4000);\nINSERT INTO employees VALUES (2, 'Bob', 'Finance', 5000);", output: "Finance|4500.0\n" }
+      ]
+    },
+    {
+      id: 140,
+      title: "Window Function - LAG/LEAD",
+      description: "Write a SQL query to compare each employee's salary with the previous employee's salary using LAG.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);",
+      sampleOutput: "1|John|IT|5000|\n2|Jane|HR|6000|5000\n3|Bob|Finance|5500|6000",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);", output: "1|John|IT|5000|\n2|Jane|HR|6000|5000\n3|Bob|Finance|5500|6000\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);", output: "1|Alice|IT|4000|\n" }
+      ]
+    },
+    {
+      id: 141,
+      title: "Window Function - SUM Over Partition",
+      description: "Write a SQL query to calculate running total of salaries using window function.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);",
+      sampleOutput: "1|John|IT|5000|5000\n2|Jane|HR|4500|9500\n3|Bob|Finance|5500|15000",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 4500);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);", output: "1|John|IT|5000|5000\n2|Jane|HR|4500|9500\n3|Bob|Finance|5500|15000\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);", output: "1|Alice|IT|4000|4000\n" }
+      ]
+    },
+    {
+      id: 142,
+      title: "Correlated Subquery",
+      description: "Write a SQL query using correlated subquery to find employees earning more than their department average.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'IT', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'HR', 4000);",
+      sampleOutput: "2|Jane|IT|6000",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'IT', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'HR', 4000);", output: "2|Jane|IT|6000\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);\nINSERT INTO employees VALUES (2, 'Bob', 'IT', 5000);", output: "2|Bob|IT|5000\n" }
+      ]
+    },
+    {
+      id: 143,
+      title: "Multiple Window Functions",
+      description: "Write a SQL query using multiple window functions (ROW_NUMBER, RANK, DENSE_RANK) together.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5000);",
+      sampleOutput: "2|Jane|HR|6000|1|1|1\n1|John|IT|5000|2|2|2\n3|Bob|Finance|5000|3|2|2",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5000);", output: "2|Jane|HR|6000|1|1|1\n1|John|IT|5000|2|2|2\n3|Bob|Finance|5000|3|2|2\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);", output: "1|Alice|IT|4000|1|1|1\n" }
+      ]
+    },
+    {
+      id: 144,
+      title: "Complex Join with Aggregation",
+      description: "Write a SQL query to find departments with total salary greater than 10000.",
+      constraints: "Tables: employees (id, name, department_id, salary), departments (id, name)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department_id INT, salary INT);\nCREATE TABLE departments (id INT, name VARCHAR(50));\nINSERT INTO departments VALUES (1, 'IT');\nINSERT INTO departments VALUES (2, 'HR');\nINSERT INTO employees VALUES (1, 'John', 1, 6000);\nINSERT INTO employees VALUES (2, 'Jane', 1, 5000);\nINSERT INTO employees VALUES (3, 'Bob', 2, 4000);",
+      sampleOutput: "IT|11000",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department_id INT, salary INT);\nCREATE TABLE departments (id INT, name VARCHAR(50));\nINSERT INTO departments VALUES (1, 'IT');\nINSERT INTO departments VALUES (2, 'HR');\nINSERT INTO employees VALUES (1, 'John', 1, 6000);\nINSERT INTO employees VALUES (2, 'Jane', 1, 5000);\nINSERT INTO employees VALUES (3, 'Bob', 2, 4000);", output: "IT|11000\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department_id INT, salary INT);\nCREATE TABLE departments (id INT, name VARCHAR(50));\nINSERT INTO departments VALUES (1, 'Finance');\nINSERT INTO employees VALUES (1, 'Alice', 1, 5000);", output: "\n" }
+      ]
+    },
+    {
+      id: 145,
+      title: "Conditional Aggregation",
+      description: "Write a SQL query to count employees by department and show count of high earners (>5000) per department.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'IT', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'HR', 4500);",
+      sampleOutput: "HR|1|0\nIT|2|1",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'IT', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'HR', 4500);", output: "HR|1|0\nIT|2|1\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'Finance', 4000);", output: "Finance|1|0\n" }
+      ]
+    },
+    {
+      id: 146,
+      title: "Nested Subqueries",
+      description: "Write a SQL query to find the employee with the second highest salary using nested subqueries.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);",
+      sampleOutput: "3|Bob|Finance|5500",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 5500);", output: "3|Bob|Finance|5500\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);\nINSERT INTO employees VALUES (2, 'Bob', 'HR', 5000);", output: "1|Alice|IT|4000\n" }
+      ]
+    },
+    {
+      id: 147,
+      title: "Window Function with Partition",
+      description: "Write a SQL query to rank employees within each department by salary.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'IT', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'HR', 4500);",
+      sampleOutput: "2|Jane|IT|6000|1\n1|John|IT|5000|2\n3|Bob|HR|4500|1",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'IT', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'HR', 4500);", output: "2|Jane|IT|6000|1\n1|John|IT|5000|2\n3|Bob|HR|4500|1\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'Finance', 4000);", output: "1|Alice|Finance|4000|1\n" }
+      ]
+    },
+    {
+      id: 148,
+      title: "Full Outer Join",
+      description: "Write a SQL query to perform a FULL OUTER JOIN between employees and departments.",
+      constraints: "Tables: employees (id, name, department_id), departments (id, name)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department_id INT);\nCREATE TABLE departments (id INT, name VARCHAR(50));\nINSERT INTO departments VALUES (1, 'IT');\nINSERT INTO departments VALUES (2, 'HR');\nINSERT INTO employees VALUES (1, 'John', 1);",
+      sampleOutput: "1|John|1|IT\n||2|HR",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department_id INT);\nCREATE TABLE departments (id INT, name VARCHAR(50));\nINSERT INTO departments VALUES (1, 'IT');\nINSERT INTO departments VALUES (2, 'HR');\nINSERT INTO employees VALUES (1, 'John', 1);", output: "1|John|1|IT\n||2|HR\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department_id INT);\nCREATE TABLE departments (id INT, name VARCHAR(50));\nINSERT INTO departments VALUES (1, 'Finance');\nINSERT INTO employees VALUES (1, 'Alice', 1);", output: "1|Alice|1|Finance\n" }
+      ]
+    },
+    {
+      id: 149,
+      title: "Cross Join",
+      description: "Write a SQL query to perform a CROSS JOIN between employees and departments.",
+      constraints: "Tables: employees (id, name), departments (id, name)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE departments (id INT, name VARCHAR(50));\nINSERT INTO employees VALUES (1, 'John');\nINSERT INTO departments VALUES (1, 'IT');\nINSERT INTO departments VALUES (2, 'HR');",
+      sampleOutput: "John|IT\nJohn|HR",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE departments (id INT, name VARCHAR(50));\nINSERT INTO employees VALUES (1, 'John');\nINSERT INTO departments VALUES (1, 'IT');\nINSERT INTO departments VALUES (2, 'HR');", output: "John|IT\nJohn|HR\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE departments (id INT, name VARCHAR(50));\nINSERT INTO employees VALUES (1, 'Alice');\nINSERT INTO departments VALUES (1, 'Finance');", output: "Alice|Finance\n" }
+      ]
+    },
+    {
+      id: 150,
+      title: "Complex CASE with Aggregation",
+      description: "Write a SQL query to categorize and count employees by salary ranges using CASE with GROUP BY.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 7000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 3500);",
+      sampleOutput: "High|1\nLow|1\nMedium|1",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 7000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 3500);", output: "High|1\nLow|1\nMedium|1\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);\nINSERT INTO employees VALUES (2, 'Bob', 'HR', 5000);", output: "Medium|2\n" }
+      ]
+    },
+    {
+      id: 151,
+      title: "UNION ALL",
+      description: "Write a SQL query to combine results from employees and contractors tables using UNION ALL.",
+      constraints: "Tables: employees (id, name), contractors (id, name)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE contractors (id INT, name VARCHAR(50));\nINSERT INTO employees VALUES (1, 'John');\nINSERT INTO employees VALUES (2, 'Jane');\nINSERT INTO contractors VALUES (1, 'Bob');",
+      sampleOutput: "John\nJane\nBob",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE contractors (id INT, name VARCHAR(50));\nINSERT INTO employees VALUES (1, 'John');\nINSERT INTO employees VALUES (2, 'Jane');\nINSERT INTO contractors VALUES (1, 'Bob');", output: "John\nJane\nBob\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE contractors (id INT, name VARCHAR(50));\nINSERT INTO employees VALUES (1, 'Alice');", output: "Alice\n" }
+      ]
+    },
+    {
+      id: 152,
+      title: "EXCEPT/MINUS",
+      description: "Write a SQL query to find employees who are not contractors using EXCEPT.",
+      constraints: "Tables: employees (id, name), contractors (id, name)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE contractors (id INT, name VARCHAR(50));\nINSERT INTO employees VALUES (1, 'John');\nINSERT INTO employees VALUES (2, 'Jane');\nINSERT INTO contractors VALUES (1, 'John');",
+      sampleOutput: "Jane",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE contractors (id INT, name VARCHAR(50));\nINSERT INTO employees VALUES (1, 'John');\nINSERT INTO employees VALUES (2, 'Jane');\nINSERT INTO contractors VALUES (1, 'John');", output: "Jane\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE contractors (id INT, name VARCHAR(50));\nINSERT INTO employees VALUES (1, 'Alice');\nINSERT INTO contractors VALUES (1, 'Alice');", output: "\n" }
+      ]
+    },
+    {
+      id: 153,
+      title: "INTERSECT",
+      description: "Write a SQL query to find common names between employees and contractors using INTERSECT.",
+      constraints: "Tables: employees (id, name), contractors (id, name)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE contractors (id INT, name VARCHAR(50));\nINSERT INTO employees VALUES (1, 'John');\nINSERT INTO employees VALUES (2, 'Jane');\nINSERT INTO contractors VALUES (1, 'John');\nINSERT INTO contractors VALUES (2, 'Bob');",
+      sampleOutput: "John",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE contractors (id INT, name VARCHAR(50));\nINSERT INTO employees VALUES (1, 'John');\nINSERT INTO employees VALUES (2, 'Jane');\nINSERT INTO contractors VALUES (1, 'John');\nINSERT INTO contractors VALUES (2, 'Bob');", output: "John\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50));\nCREATE TABLE contractors (id INT, name VARCHAR(50));\nINSERT INTO employees VALUES (1, 'Alice');\nINSERT INTO contractors VALUES (1, 'Bob');", output: "\n" }
+      ]
+    },
+    {
+      id: 154,
+      title: "Stored Procedure Logic",
+      description: "Write a SQL query that simulates stored procedure logic using multiple CTEs and conditional logic.",
+      constraints: "Table: employees (id, name, department, salary)",
+      sampleInput: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 4000);",
+      sampleOutput: "IT|5000.0\nHR|6000.0\nFinance|4000.0",
+      testcases: [
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'John', 'IT', 5000);\nINSERT INTO employees VALUES (2, 'Jane', 'HR', 6000);\nINSERT INTO employees VALUES (3, 'Bob', 'Finance', 4000);", output: "IT|5000.0\nHR|6000.0\nFinance|4000.0\n" },
+        { input: "CREATE TABLE employees (id INT, name VARCHAR(50), department VARCHAR(50), salary INT);\nINSERT INTO employees VALUES (1, 'Alice', 'IT', 4000);", output: "IT|4000.0\n" }
       ]
     }
   ]
