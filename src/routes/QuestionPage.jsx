@@ -36,6 +36,119 @@ import HistoryIcon from '@mui/icons-material/History'
 import { motion } from 'framer-motion'
 import confetti from 'canvas-confetti'
 
+// SQL execution using sql.js (SQLite in the browser)
+let sqlJsInstance = null
+
+const loadSQLJS = async () => {
+  if (!sqlJsInstance) {
+    // Load sql.js from CDN
+    const SQL = await window.initSqlJs({
+      locateFile: (file) => `https://sql.js.org/dist/${file}`
+    })
+    sqlJsInstance = SQL
+  }
+  return sqlJsInstance
+}
+
+const runSQLWithSQLJS = async (query, testcases) => {
+  const results = []
+  
+  try {
+    const SQL = await loadSQLJS()
+    
+    for (const testcase of testcases) {
+      try {
+        // Create a new database for each test case
+        const db = new SQL.Database()
+        
+        // Execute schema setup (CREATE TABLE, INSERT statements)
+        const schemaStatements = testcase.input.split(';').filter(s => s.trim())
+        for (const statement of schemaStatements) {
+          if (statement.trim()) {
+            try {
+              db.run(statement.trim() + ';')
+            } catch (schemaError) {
+              // Ignore errors in schema (might be comments or empty)
+            }
+          }
+        }
+        
+        // Execute user query
+        let output = ''
+        try {
+          // Check if it's a SELECT query
+          const isSelect = query.trim().toUpperCase().startsWith('SELECT') || 
+                          query.trim().toUpperCase().startsWith('WITH')
+          
+          if (isSelect) {
+            const stmt = db.prepare(query)
+            const columns = stmt.getColumnNames()
+            const rows = []
+            
+            // Get all rows
+            while (stmt.step()) {
+              const row = stmt.getAsObject()
+              const values = columns.map(col => {
+                const val = row[col]
+                return val === null ? '' : String(val)
+              })
+              rows.push(values.join('|'))
+            }
+            
+            stmt.free()
+            output = rows.join('\n')
+          } else {
+            // Non-SELECT query (INSERT, UPDATE, DELETE, CREATE, etc.)
+            // Execute the query
+            db.run(query)
+            // For non-SELECT, output is typically empty unless we need to verify
+            output = ''
+          }
+        } catch (queryError) {
+          results.push({
+            passed: false,
+            expected: testcase.output.trim(),
+            got: `SQL Error: ${queryError.message}`,
+          })
+          db.close()
+          continue
+        }
+        
+        db.close()
+        
+        // Compare results
+        const got = output.trim()
+        const expected = testcase.output.trim()
+        const passed = got === expected
+        
+        results.push({
+          passed,
+          expected,
+          got,
+        })
+      } catch (error) {
+        results.push({
+          passed: false,
+          expected: testcase.output.trim(),
+          got: `Error: ${error.message}`,
+        })
+      }
+    }
+  } catch (error) {
+    // If sql.js fails to load, try backend fallback
+    console.error('SQL.js load error:', error)
+    for (const testcase of testcases) {
+      results.push({
+        passed: false,
+        expected: testcase.output.trim(),
+        got: `Error loading SQL.js: ${error.message}. Please ensure you have internet connection.`,
+      })
+    }
+  }
+  
+  return results
+}
+
 let pyodideInstance = null
 
 const loadPyodideInstance = async () => {
@@ -215,8 +328,52 @@ export default function QuestionPage() {
       // Detect if it's SQL category
       const isSQL = id && id.startsWith('SQL_')
       
-      // Try backend first
-      const response = await fetch('http://localhost:5000/api/run', {
+      if (isSQL) {
+        // Use sql.js (SQLite in browser) for SQL execution
+        const results = await runSQLWithSQLJS(code, question.testcases)
+        setResults(results)
+        
+        if (submit) {
+          const allPassed = results.every(r => r.passed)
+          if (allPassed) {
+            await markAsSolved()
+            setSnackbar({
+              open: true,
+              message: 'All testcases passed! Question solved! 🎉',
+              severity: 'success',
+            })
+            if (user) {
+              await setDoc(doc(db, 'users', user.uid, 'attempts', `${id}_${qid}`), {
+                count: 0,
+                hintShown: hintShown,
+              }, { merge: true })
+            }
+            setAttempts(0)
+          } else {
+            const newAttempts = attempts + 1
+            setAttempts(newAttempts)
+            if (user) {
+              await setDoc(doc(db, 'users', user.uid, 'attempts', `${id}_${qid}`), {
+                count: newAttempts,
+                hintShown: hintShown,
+              }, { merge: true })
+            }
+            setSnackbar({
+              open: true,
+              message: 'Some testcases failed. Try again!',
+              severity: 'error',
+            })
+          }
+        }
+        setLoading(false)
+        return
+      }
+      
+      // Try backend first for Python
+      // Use relative path for Vercel serverless functions, or absolute URL for local dev
+      const apiUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000' : '')
+      const apiEndpoint = apiUrl ? `${apiUrl}/api/run` : '/api/run'
+      const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -224,7 +381,7 @@ export default function QuestionPage() {
         body: JSON.stringify({
           code,
           testcases: question.testcases,
-          language: isSQL ? 'sql' : 'python',
+          language: 'python',
         }),
       })
 
@@ -271,21 +428,7 @@ export default function QuestionPage() {
       }
     } catch (error) {
       // Fallback to Pyodide (only for Python, not SQL)
-      const isSQL = id && id.startsWith('SQL_')
-      if (isSQL) {
-        setSnackbar({
-          open: true,
-          message: 'SQL execution requires backend server. Please ensure the server is running.',
-          severity: 'error',
-        })
-        setResults([{
-          passed: false,
-          expected: 'N/A',
-          got: `Backend Error: ${error.message}. SQL execution requires the backend server.`,
-        }])
-        setLoading(false)
-        return
-      }
+      // SQL should have been handled above with OneCompiler
       
       console.log('Backend unavailable, using Pyodide fallback')
       try {
