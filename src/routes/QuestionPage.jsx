@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { onAuthStateChanged } from 'firebase/auth'
 import { db, auth } from '../firebase'
@@ -38,6 +38,29 @@ import confetti from 'canvas-confetti'
 
 // SQL execution using sql.js (SQLite in the browser)
 let sqlJsInstance = null
+
+const mockRewards = {
+  Mock_01: 'ice cream',
+  Mock_02: 'tiramisu',
+  Mock_03: 'brownie',
+  Mock_04: 'donut',
+  Mock_05: 'cupcake',
+  Mock_06: 'macaron',
+  Mock_07: 'gelato',
+  Mock_08: 'waffle',
+  Mock_09: 'cheesecake',
+  Mock_10: 'pudding',
+  Mock_11: 'truffle',
+  Mock_12: 'eclair',
+  Mock_13: 'baklava',
+  Mock_14: 'churro',
+  Mock_15: 'cannoli',
+  Mock_16: 'mousse',
+  Mock_17: 'pie',
+  Mock_18: 'flan',
+  Mock_19: 'sundae',
+  Mock_20: 'torte',
+}
 
 const loadSQLJS = async () => {
   if (!sqlJsInstance) {
@@ -190,6 +213,7 @@ const loadPyodideInstance = async () => {
 export default function QuestionPage() {
   const { id, qid } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const [question, setQuestion] = useState(null)
   const [code, setCode] = useState('# Write your code here\n')
   const [results, setResults] = useState([])
@@ -243,7 +267,7 @@ export default function QuestionPage() {
           setCode(codeDoc.data().code)
         } else {
           // Set default code if no saved code
-          if (id && id.startsWith('SQL_')) {
+          if ((q.language && q.language === 'sql') || (id && id.startsWith('SQL_'))) {
             setCode('-- Write your SQL query here\nSELECT * FROM employees;')
           } else {
             setCode('# Write your code here\n')
@@ -302,6 +326,8 @@ export default function QuestionPage() {
     return () => unsubscribe()
   }, [id, qid, navigate])
 
+  // Copy/paste allowed (mock proctoring relaxed)
+
   const saveCode = async () => {
     if (!user) return
 
@@ -326,7 +352,7 @@ export default function QuestionPage() {
 
     try {
       // Detect if it's SQL category
-      const isSQL = id && id.startsWith('SQL_')
+      const isSQL = (question?.language === 'sql') || (id && id.startsWith('SQL_'))
       
       if (isSQL) {
         // Use sql.js (SQLite in browser) for SQL execution
@@ -570,27 +596,50 @@ sys.stdout = StringIO()
 
       // Unlock next category if completed
       if (allSolved) {
-        const allCategories = ['Basics', 'Lists', 'Strings', 'OOP', 'DSA', 'SQL_Basics', 'SQL_Intermediate', 'SQL_Advanced']
+        const mockCategories = Array.from({ length: 20 }, (_, i) => `Mock_${String(i + 1).padStart(2, '0')}`)
+        const allCategories = ['Basics', 'Lists', 'Strings', 'OOP', 'DSA', 'SQL_Basics', 'SQL_Intermediate', 'SQL_Advanced', ...mockCategories]
         const categoryIndex = allCategories.indexOf(id)
         if (categoryIndex < allCategories.length - 1) {
           const nextCategory = allCategories[categoryIndex + 1]
+          // Do not unlock beyond Mock_02 (coming soon)
+          if (nextCategory.startsWith('Mock_') && nextCategory !== 'Mock_02') {
+            return
+          }
           await setDoc(doc(db, 'users', user.uid, 'progress', nextCategory), {
             unlocked: true,
             solved: [],
             completed: false,
           }, { merge: true })
 
+          // Reward for mock completion
+          if (id.startsWith('Mock_')) {
+            const rewardItem = mockRewards[id] || 'treat'
+            await setDoc(doc(db, 'users', user.uid, 'rewards', 'mock'), {
+              latest: rewardItem,
+              lastCategory: id,
+              updatedAt: new Date(),
+              items: {
+                [id]: rewardItem,
+              },
+            }, { merge: true })
+            setSnackbar({
+              open: true,
+              message: `Category completed! ${nextCategory} unlocked! Reward: ${rewardItem}! 🎉`,
+              severity: 'success',
+            })
+          } else {
+            setSnackbar({
+              open: true,
+              message: `Category completed! ${nextCategory} unlocked! 🎉`,
+              severity: 'success',
+            })
+          }
+
           // Confetti animation
           confetti({
             particleCount: 100,
             spread: 70,
             origin: { y: 0.6 },
-          })
-
-          setSnackbar({
-            open: true,
-            message: `Category completed! ${nextCategory} unlocked! 🎉`,
-            severity: 'success',
           })
         }
       }
@@ -668,7 +717,15 @@ sys.stdout = StringIO()
 
     const nextQuestion = categoryQuestions[newIndex]
     if (nextQuestion) {
-      navigate(`/category/${id}/question/${nextQuestion.id}`)
+      const navState = location.state?.fromMarked
+        ? {
+            fromMarked: true,
+            markedCategory: location.state?.markedCategory || 'all',
+            scrollKey: `${id}_${nextQuestion.id}`,
+          }
+        : undefined
+
+      navigate(`/category/${id}/question/${nextQuestion.id}`, { state: navState })
     }
   }
 
@@ -728,7 +785,18 @@ sys.stdout = StringIO()
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 4, position: 'relative', zIndex: 1 }}>
               <Button
                 startIcon={<ArrowBackIcon />}
-                onClick={() => navigate(`/category/${id}`)}
+                onClick={() => {
+                  if (location.state?.fromMarked) {
+                    navigate('/marked-questions', {
+                      state: {
+                        selectedCategory: location.state?.markedCategory || 'all',
+                        scrollTo: location.state?.scrollKey || `${id}_${qid}`,
+                      },
+                    })
+                  } else {
+                    navigate(`/category/${id}`)
+                  }
+                }}
                 sx={{ 
                   mr: 2,
                   background: 'linear-gradient(145deg, #1a1a1a 0%, #0a0a0a 100%)',
@@ -1108,7 +1176,7 @@ sys.stdout = StringIO()
                       code={code} 
                       onChange={setCode} 
                       onRun={() => runCode(false)} 
-                      language={id && id.startsWith('SQL_') ? 'sql' : 'python'}
+                      language={(question?.language === 'sql') || (id && id.startsWith('SQL_')) ? 'sql' : 'python'}
                     />
                   </Box>
                   <Box 

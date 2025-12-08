@@ -13,6 +13,7 @@ import {
   Grid,
   CircularProgress,
   Button,
+  Paper,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -33,6 +34,7 @@ export default function Dashboard() {
   const [resetting, setResetting] = useState(false)
   const [resetMenuAnchor, setResetMenuAnchor] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState(null)
+  const [reward, setReward] = useState(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -45,6 +47,7 @@ export default function Dashboard() {
       const progressData = {}
       
       for (const category of categories) {
+        if (category.id.startsWith('Mock_')) continue
         try {
           const progressDoc = await getDoc(doc(db, 'users', user.uid, 'progress', category.id))
           if (progressDoc.exists()) {
@@ -68,6 +71,14 @@ export default function Dashboard() {
       }
 
       setProgress(progressData)
+      try {
+        const rewardDoc = await getDoc(doc(db, 'users', user.uid, 'rewards', 'mock'))
+        if (rewardDoc.exists()) {
+          setReward(rewardDoc.data())
+        }
+      } catch (err) {
+        console.error('Error loading rewards:', err)
+      }
       setLoading(false)
     })
 
@@ -142,6 +153,7 @@ export default function Dashboard() {
       // Reload progress
       const progressData = {}
       for (const category of categories) {
+        if (category.id.startsWith('Mock_')) continue
         try {
           const progressDoc = await getDoc(doc(db, 'users', user.uid, 'progress', category.id))
           if (progressDoc.exists()) {
@@ -266,7 +278,7 @@ export default function Dashboard() {
                   },
                 }}
               >
-                {categories.map((category) => (
+                {categories.filter(c => !c.id.startsWith('Mock_')).map((category) => (
                   <MenuItem
                     key={category.id}
                     onClick={() => handleCategorySelect(category.id)}
@@ -282,13 +294,31 @@ export default function Dashboard() {
                 ))}
               </Menu>
             </Box>
+            {reward?.latest && (
+              <Paper
+                sx={{
+                  mb: 3,
+                  p: 2.5,
+                  background: 'linear-gradient(145deg, #0f0f0f 0%, #000000 100%)',
+                  border: '1px solid rgba(123, 97, 255, 0.3)',
+                  color: '#fff',
+                }}
+              >
+                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#7B61FF' }}>
+                  Latest Reward
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)' }}>
+                  You earned a {reward.latest} after completing {reward.lastCategory || 'a mock test'}!
+                </Typography>
+              </Paper>
+            )}
             <Grid container spacing={3}>
-              {categories.map((category, index) => (
+              {categories.filter(c => !c.id.startsWith('Mock_')).map((category, index) => (
                 <Grid item xs={12} sm={6} md={4} key={category.id}>
                   <CategoryCard
                     category={category}
                     progress={progress[category.id] || { solved: [], completed: false }}
-                    unlocked={progress[category.id]?.unlocked ?? (category.id === 'Basics')}
+                    unlocked={progress[category.id]?.unlocked ?? (category.id === 'Basics' || category.id.startsWith('SQL_') || category.id === 'Mock_01')}
                     completed={progress[category.id]?.completed || false}
                   />
                 </Grid>

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { doc, getDoc } from 'firebase/firestore'
 import { onAuthStateChanged } from 'firebase/auth'
 import { db, auth } from '../firebase'
@@ -23,10 +23,14 @@ import { categories } from '../data/questions'
 
 export default function MarkedQuestionsPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [markedQuestions, setMarkedQuestions] = useState([])
   const [loading, setLoading] = useState(true)
   const [progress, setProgress] = useState({})
-  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [selectedCategory, setSelectedCategory] = useState(
+    location.state?.selectedCategory || 'all'
+  )
+  const [scrollTarget, setScrollTarget] = useState(location.state?.scrollTo || null)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -52,10 +56,15 @@ export default function MarkedQuestionsPage() {
             // Parse "categoryId_questionId" format
             const parts = key.split('_')
             if (parts.length >= 2) {
-              const categoryId = parts[0]
-              const qid = parseInt(parts.slice(1).join('_')) // Handle multi-digit IDs
-              
-              if (categoryId && qid && questions[categoryId] && !processedKeys.has(key)) {
+              const qid = parseInt(parts.pop(), 10)
+              const categoryId = parts.join('_')
+
+              if (
+                categoryId &&
+                Number.isInteger(qid) &&
+                questions[categoryId] &&
+                !processedKeys.has(key)
+              ) {
                 const question = questions[categoryId].find(q => q.id === qid)
                 if (question) {
                   marked.push({ question, categoryId, qid })
@@ -90,6 +99,40 @@ export default function MarkedQuestionsPage() {
 
     return () => unsubscribe()
   }, [navigate])
+
+  useEffect(() => {
+    if (location.state?.selectedCategory) {
+      setSelectedCategory(location.state.selectedCategory)
+    }
+    if (location.state?.scrollTo) {
+      setScrollTarget(location.state.scrollTo)
+    }
+  }, [location.state])
+
+  useEffect(() => {
+    if (loading || !scrollTarget) return
+
+    const el = document.getElementById(`marked-question-${scrollTarget}`)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      setScrollTarget(null)
+    }
+  }, [loading, scrollTarget, markedQuestions])
+
+  const handleNavigateToQuestion = (categoryId, qid) => {
+    navigate(`/category/${categoryId}/question/${qid}`, {
+      state: {
+        fromMarked: true,
+        markedCategory: selectedCategory,
+        scrollKey: `${categoryId}_${qid}`,
+      },
+    })
+  }
+
+  const filteredQuestions = useMemo(() => {
+    if (selectedCategory === 'all') return markedQuestions
+    return markedQuestions.filter((mq) => mq.categoryId === selectedCategory)
+  }, [markedQuestions, selectedCategory])
 
   if (loading) {
     return (
@@ -209,33 +252,21 @@ export default function MarkedQuestionsPage() {
                 <Typography variant="body1" sx={{ mb: 4, color: 'rgba(255, 255, 255, 0.7)' }}>
                   {selectedCategory === 'all'
                     ? `${markedQuestions.length} question${markedQuestions.length !== 1 ? 's' : ''} marked for review`
-                    : `${markedQuestions.filter((mq) => mq.categoryId === selectedCategory).length} question${markedQuestions.filter((mq) => mq.categoryId === selectedCategory).length !== 1 ? 's' : ''} in ${categories.find((c) => c.id === selectedCategory)?.name || selectedCategory}`}
+                    : `${filteredQuestions.length} question${filteredQuestions.length !== 1 ? 's' : ''} in ${categories.find((c) => c.id === selectedCategory)?.name || selectedCategory}`}
                 </Typography>
 
                 <Grid container spacing={3}>
-                  {selectedCategory === 'all'
-                    ? markedQuestions.map(({ question, categoryId, qid }) => (
-                        <Grid item xs={12} key={`${categoryId}_${qid}`}>
-                          <QuestionCard
-                            question={question}
-                            categoryId={categoryId}
-                            solved={progress[categoryId]?.solved?.includes(question.id) || false}
-                            marked={true}
-                          />
-                        </Grid>
-                      ))
-                    : markedQuestions
-                        .filter((mq) => mq.categoryId === selectedCategory)
-                        .map(({ question, categoryId, qid }) => (
-                          <Grid item xs={12} key={`${categoryId}_${qid}`}>
-                            <QuestionCard
-                              question={question}
-                              categoryId={categoryId}
-                              solved={progress[categoryId]?.solved?.includes(question.id) || false}
-                              marked={true}
-                            />
-                          </Grid>
-                        ))}
+                  {filteredQuestions.map(({ question, categoryId, qid }) => (
+                    <Grid item xs={12} key={`${categoryId}_${qid}`} id={`marked-question-${categoryId}_${qid}`}>
+                      <QuestionCard
+                        question={question}
+                        categoryId={categoryId}
+                        solved={progress[categoryId]?.solved?.includes(question.id) || false}
+                        marked={true}
+                        onNavigate={() => handleNavigateToQuestion(categoryId, qid)}
+                      />
+                    </Grid>
+                  ))}
                 </Grid>
               </>
             )}

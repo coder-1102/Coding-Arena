@@ -23,6 +23,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import BookmarkIcon from '@mui/icons-material/Bookmark'
+import QuizIcon from '@mui/icons-material/Quiz'
 
 const drawerWidth = 260
 const collapsedWidth = 70
@@ -177,6 +178,48 @@ export default function Sidebar() {
                     primaryTypographyProps={{
                       fontWeight: location.pathname === '/marked-questions' ? 700 : 500,
                       color: location.pathname === '/marked-questions' ? '#FFD700' : 'rgba(255, 255, 255, 0.8)',
+                    }}
+                  />
+                )}
+              </ListItemButton>
+            </Tooltip>
+          </ListItem>
+          <ListItem disablePadding>
+            <Tooltip title={open ? '' : 'Mock Tests'} placement="right">
+              <ListItemButton
+                selected={location.pathname === '/mock-tests'}
+                onClick={() => navigate('/mock-tests')}
+                sx={{
+                  minHeight: 56,
+                  justifyContent: open ? 'flex-start' : 'center',
+                  px: open ? 3 : 2,
+                  '&.Mui-selected': {
+                    background: 'rgba(123, 97, 255, 0.15)',
+                    borderLeft: '3px solid #7B61FF',
+                    '&:hover': {
+                      background: 'rgba(123, 97, 255, 0.2)',
+                    },
+                  },
+                  '&:hover': {
+                    background: 'rgba(123, 97, 255, 0.1)',
+                  },
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: open ? 56 : 0,
+                    justifyContent: 'center',
+                    color: location.pathname === '/mock-tests' ? '#7B61FF' : 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
+                  <QuizIcon />
+                </ListItemIcon>
+                {open && (
+                  <ListItemText 
+                    primary="Mock Tests" 
+                    primaryTypographyProps={{
+                      fontWeight: location.pathname === '/mock-tests' ? 700 : 500,
+                      color: location.pathname === '/mock-tests' ? '#7B61FF' : 'rgba(255, 255, 255, 0.8)',
                     }}
                   />
                 )}

@@ -40,7 +40,7 @@ export default function CategoryPage() {
           setProgress(data)
           setUnlocked(data.unlocked)
         } else {
-          setUnlocked(id === 'Basics' || id.startsWith('SQL_'))
+          setUnlocked(id === 'Basics' || id.startsWith('SQL_') || id === 'Mock_01')
           setProgress({ solved: [], completed: false })
         }
 
@@ -66,7 +66,7 @@ export default function CategoryPage() {
         }
       } catch (error) {
         console.error('Error fetching progress:', error)
-        setUnlocked(id === 'Basics' || id === 'SQL_Basics')
+        setUnlocked(id === 'Basics' || id === 'SQL_Basics' || id === 'Mock_01')
         setProgress({ solved: [], completed: false })
       } finally {
         setLoading(false)

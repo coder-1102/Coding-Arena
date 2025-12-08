@@ -10,10 +10,15 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import BookmarkIcon from '@mui/icons-material/Bookmark'
 import { motion } from 'framer-motion'
 
-export default function QuestionCard({ question, categoryId, solved, marked }) {
+export default function QuestionCard({ question, categoryId, solved, marked, onNavigate }) {
   const navigate = useNavigate()
 
   const handleClick = () => {
+    if (onNavigate) {
+      onNavigate(question, categoryId)
+      return
+    }
+
     navigate(`/category/${categoryId}/question/${question.id}`)
   }
 

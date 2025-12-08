@@ -1,3 +1,5 @@
+const mockCategoryIds = Array.from({ length: 20 }, (_, i) => `Mock_${String(i + 1).padStart(2, '0')}`)
+
 export const categories = [
   { id: 'Basics', name: 'Python Basics', total: 20 },
   { id: 'Lists', name: 'Lists & Arrays', total: 20 },
@@ -6,7 +8,14 @@ export const categories = [
   { id: 'DSA', name: 'Data Structures & Algorithms', total: 20 },
   { id: 'SQL_Basics', name: 'SQL Basics', total: 18 },
   { id: 'SQL_Intermediate', name: 'SQL Intermediate', total: 18 },
-  { id: 'SQL_Advanced', name: 'SQL Advanced', total: 18 }
+  { id: 'SQL_Advanced', name: 'SQL Advanced', total: 18 },
+  // Mock tests (sequential unlock, first is open)
+  ...mockCategoryIds.map((id, i) => ({
+    id,
+    name: `Mock Test ${i + 1}`,
+    total: 4,
+    locked: i !== 0,
+  })),
 ];
 
 export const questions = {
@@ -1984,3 +1993,528 @@ export const questions = {
     }
   ]
 };
+
+// -------------------------
+// Mock Test (proctored) data
+// -------------------------
+const buildMockQuestions = () => {
+  const codingPool = (level) => {
+    if (level === 1) {
+      return [
+        {
+          id: 1,
+          title: 'Problem 1 (Python): Littlemiss and the Mood Swing String',
+          language: 'python',
+          description: `Littlemiss has a very moody pet scroll.
+Sometimes it reads forwards, sometimes backwards.
+If the scroll sees a word that looks the same from both sides, it gets super happy and glows.
+If not, it just sits there quietly judging her life choices.
+
+She gives you one word S (no spaces).
+Your job is to check if the scroll will glow.
+
+Input
+S
+
+Output
+
+Print:
+
+Yes
+
+
+if it glows (string is the same forward and backward), else:
+
+No
+
+Constraints
+
+1 ≤ |S| ≤ 100000
+
+Example
+
+Input:
+
+level
+
+
+Output:
+
+Yes`,
+          constraints: '1 ≤ |S| ≤ 100000',
+          sampleInput: 'level',
+          sampleOutput: 'Yes',
+          hint: 'Compare S with its reverse; output Yes if equal else No.',
+          testcases: [
+            { input: 'level', output: 'Yes\n' },
+            { input: 'abc', output: 'No\n' },
+            { input: 'a', output: 'Yes\n' },
+          ],
+        },
+        {
+          id: 2,
+          title: 'Problem 2 (Python): Littlemiss and the Lazy Wheel',
+          language: 'python',
+          description: `Littlemiss owns a magical wheel that is extremely lazy.
+When she tells it to rotate a list, it refuses to rotate one step at a time.
+Instead, it does one giant rotation as if all small rotations happened at once.
+
+Littlemiss gives:
+
+N = number of items
+
+K = how many right-rotations to pretend
+
+A = the list
+
+The lazy wheel says:
+“Just give me the final rotated list. I’m not rotating K times, that’s too much cardio.”
+
+Input
+N K
+A1 A2 ... AN
+
+Output
+
+The list after a right rotation by K.
+
+Constraints
+
+1 ≤ N ≤ 200000
+
+0 ≤ K ≤ 1e18
+
+Example
+
+Input:
+
+5 2
+1 2 3 4 5
+
+
+Output:
+
+4 5 1 2 3`,
+          constraints: '1 ≤ N ≤ 200000, 0 ≤ K ≤ 1e18',
+          sampleInput: '5 2\n1 2 3 4 5',
+          sampleOutput: '4 5 1 2 3',
+          hint: 'Use K mod N; output tail then head.',
+          testcases: [
+            { input: '5 2\n1 2 3 4 5', output: '4 5 1 2 3\n' },
+            { input: '4 0\n10 20 30 40', output: '10 20 30 40\n' },
+            { input: '3 5\n7 8 9', output: '8 9 7\n' },
+          ],
+        },
+      ]
+    }
+    if (level === 2) {
+      return [
+        {
+          id: 1,
+          title: 'Problem 1 (Python): Littlemiss and the Vanishing Vowels',
+          language: 'python',
+          description: `Littlemiss is reading a spellbook that refuses to show any vowels.
+Whenever it sees a vowel (a, e, i, o, u — both cases), it simply deletes it and moves on, humming quietly.
+
+Given a string S, remove all vowels and print whatever is left.
+If everything disappears, print an empty line (the spellbook likes silence).
+
+Input
+S
+
+Output
+
+The string with all vowels removed.
+
+Constraints
+
+1 ≤ |S| ≤ 200000
+
+Example
+
+Input:
+
+littlemiss
+
+
+Output:
+
+lttl mss
+
+
+(Yes, space stays; only vowels vanish.)`,
+          constraints: '1 ≤ |S| ≤ 200000',
+          sampleInput: 'littlemiss',
+          sampleOutput: 'lttl mss',
+          hint: 'Filter characters not in aeiouAEIOU.',
+          testcases: [
+            { input: 'littlemiss', output: 'lttl mss\n' },
+            { input: 'AEIOU', output: '\n' },
+            { input: 'code chef', output: 'cd chf\n' },
+          ],
+        },
+        {
+          id: 2,
+          title: 'Problem 2 (Python): Littlemiss and the “Almost Increasing” Array',
+          language: 'python',
+          description: `Littlemiss has an array of numbers.
+She wants to know if the array is almost increasing — meaning she can remove at most one element and the array becomes strictly increasing.
+
+Your task:
+Given array A, print:
+
+Yes
+
+
+if she can delete at most one element and make the array strictly increasing.
+Else print:
+
+No
+
+Input
+N
+A1 A2 ... AN
+
+Output
+
+Yes or No
+
+Constraints
+
+1 ≤ N ≤ 200000
+|Ai| ≤ 1e9
+
+Example
+
+Input:
+
+5
+1 3 2 4 5
+
+
+Output:
+
+Yes
+
+
+(Removing 3 or 2 works.)`,
+          constraints: '1 ≤ N ≤ 200000, |Ai| ≤ 1e9',
+          sampleInput: '5\n1 3 2 4 5',
+          sampleOutput: 'Yes',
+          hint: 'Standard almost-increasing check with one allowed violation; use two-pass or single pass tracking drops.',
+          testcases: [
+            { input: '5\n1 3 2 4 5', output: 'Yes\n' },
+            { input: '4\n1 2 3 4', output: 'Yes\n' },
+            { input: '3\n3 2 1', output: 'No\n' },
+          ],
+        },
+      ]
+    }
+    const isBasic = level <= 10
+    if (isBasic) {
+      return [
+        {
+          id: 1,
+          title: `Mock L${level}: littlemiss Simple Array Sum`,
+          language: 'python',
+          description: `A warm, story-style prompt: littlemiss counts all treats in a long picnic line. Given N and an array A, output the sum of all elements.\n\nInput:\n- N\n- N space-separated integers\nOutput:\n- Single integer sum\nProctored: fullscreen, no tab switch/paste.`,
+          constraints: "1 <= N <= 1e5, |Ai| <= 1e6",
+          sampleInput: "5\n1 2 3 4 5",
+          sampleOutput: "15",
+          hint: "Just accumulate; use fast IO for large N.",
+          testcases: [
+            { input: "5\n1 2 3 4 5", output: "15\n" },
+            { input: "3\n-1 0 2", output: "1\n" },
+            { input: "1\n1000000", output: "1000000\n" },
+          ],
+        },
+        {
+          id: 2,
+          title: `Mock L${level}: littlemiss Long Palindrome Check`,
+          language: 'python',
+          description: `A lengthy fairytale setup where littlemiss reads a scroll of characters. Determine if the given string S is a palindrome (case-sensitive) and print Yes/No.\n\nInput:\n- String S (no spaces)\nOutput:\n- Yes or No\nProctored: fullscreen.`,
+          constraints: "1 <= |S| <= 1e5",
+          sampleInput: "level",
+          sampleOutput: "Yes",
+          hint: "Two-pointer from both ends.",
+          testcases: [
+            { input: "level", output: "Yes\n" },
+            { input: "abc", output: "No\n" },
+            { input: "a", output: "Yes\n" },
+          ],
+        },
+      ]
+    }
+
+    return [
+      {
+        id: 1,
+        title: `Mock L${level}: Maximum Subarray for littlemiss`,
+        language: 'python',
+        description: `littlemiss has an array A of N integers. She wants the maximum possible sum of any non-empty contiguous subarray.\n\nInput Format:\n- First line: N\n- Second line: N space-separated integers A1..AN\n\nOutput Format:\n- One integer: maximum subarray sum\n\nNotes: Classic CodeChef-style; handle all-negative arrays.\nProctored: timed, fullscreen, no tab-switch/paste.`,
+        constraints: "1 <= N <= 2e5, |Ai| <= 1e9",
+        sampleInput: "5\n-2 1 -3 4 -1",
+        sampleOutput: "4",
+        hint: "Use Kadane in O(N); track running best and current.",
+        testcases: [
+          { input: "5\n-2 1 -3 4 -1", output: "4\n" },
+          { input: "4\n1 2 3 4", output: "10\n" },
+          { input: "3\n-5 -2 -1", output: "-1\n" },
+        ],
+      },
+      {
+        id: 2,
+        title: `Mock L${level}: Longest Subarray ≤ K for littlemiss`,
+        language: 'python',
+        description: `littlemiss has an array A of N integers and a limit K. Find the length of the longest contiguous subarray whose sum is ≤ K.\n\nInput Format:\n- First line: N K\n- Second line: N space-separated integers A1..AN\n\nOutput Format:\n- One integer: maximum length\n\nProctored: timed, fullscreen, no tab-switch/paste.`,
+        constraints: "1 <= N <= 2e5, |Ai| <= 1e4, 0 <= K <= 1e9",
+        sampleInput: "5 7\n2 1 5 1 3",
+        sampleOutput: "4",
+        hint: "Use two pointers; shrink while sum exceeds K.",
+        testcases: [
+          { input: "5 7\n2 1 5 1 3", output: "4\n" },
+          { input: "3 3\n2 2 2", output: "1\n" },
+          { input: "6 10\n1 2 3 4 5 6", output: "4\n" },
+        ],
+      },
+    ]
+  }
+
+  const sqlPool = (level) => {
+    if (level === 1) {
+      return [
+        {
+          id: 3,
+          title: 'Problem 3 (SQL): Littlemiss and the Department Drama',
+          language: 'sql',
+          description: `Littlemiss works in an office where every department loves comparing salaries.
+Every day someone yells,
+“WE HAVE THE HIGHEST PAID PERSON!”
+Another department yells back,
+“BUT WE HAVE MORE PEOPLE!”
+
+Littlemiss is tired of the drama.
+
+Given a table employees(id, name, dept, salary), help her settle fights by printing, for each department:
+
+dept | max_salary | total_people
+
+Example Data
+1 | jam        | eng | 100
+2 | littlemiss | eng | 300
+3 | lee        | ops | 200
+
+Expected Output
+eng|300|2
+ops|200|1`,
+          constraints: 'Table: employees(id INT, name TEXT, dept TEXT, salary INT)',
+          sampleInput: "CREATE TABLE employees(id INT, name VARCHAR(20), dept VARCHAR(20), salary INT);\nINSERT INTO employees VALUES (1,'jam','eng',100);\nINSERT INTO employees VALUES (2,'littlemiss','eng',300);\nINSERT INTO employees VALUES (3,'lee','ops',200);",
+          sampleOutput: 'eng|300|2\nops|200|1',
+          hint: 'GROUP BY dept; MAX(salary), COUNT(*); ORDER BY dept.',
+          testcases: [
+            { input: "CREATE TABLE employees(id INT, name VARCHAR(20), dept VARCHAR(20), salary INT);\nINSERT INTO employees VALUES (1,'jam','eng',100);\nINSERT INTO employees VALUES (2,'littlemiss','eng',300);\nINSERT INTO employees VALUES (3,'lee','ops',200);", output: "eng|300|2\nops|200|1\n" },
+            { input: "CREATE TABLE employees(id INT, name VARCHAR(20), dept VARCHAR(20), salary INT);\nINSERT INTO employees VALUES (1,'a','x',10);", output: "x|10|1\n" },
+          ],
+        },
+        {
+          id: 4,
+          title: 'Problem 4 (SQL): Littlemiss and the Daily Score Cleanup (Easy Version)',
+          language: 'sql',
+          description: `Littlemiss is looking at a giant scoreboard full of messy submissions.
+People submit again and again, even when they keep scoring badly.
+Littlemiss wants to clean things up so she only sees each user’s highest score, nothing more.
+
+Your job is simple:
+
+From the table submissions(id, user, score, submitted_at), print for every user:
+
+user | best_score
+
+
+That’s it.
+No ranking, no drama, no bragging — just the best score each user ever got.
+
+Table: submissions
+column	type
+id	INT
+user	VARCHAR
+score	INT
+submitted_at	TIMESTAMP
+Example Data
+1 | fizz       | 95 | 1
+2 | buzz       | 95 | 2
+3 | littlemiss | 90 | 3
+
+Expected Output
+fizz|95
+buzz|95
+littlemiss|90`,
+          constraints: 'Table: submissions(id INT, user VARCHAR, score INT, submitted_at TIMESTAMP)',
+          sampleInput: "CREATE TABLE submissions(id INT, user VARCHAR(20), score INT, submitted_at INT);\nINSERT INTO submissions VALUES (1,'fizz',95,1);\nINSERT INTO submissions VALUES (2,'buzz',95,2);\nINSERT INTO submissions VALUES (3,'littlemiss',90,3);",
+          sampleOutput: 'fizz|95\nbuzz|95\nlittlemiss|90',
+          hint: 'GROUP BY user; MAX(score); ORDER BY user for deterministic output.',
+          testcases: [
+            { input: "CREATE TABLE submissions(id INT, user VARCHAR(20), score INT, submitted_at INT);\nINSERT INTO submissions VALUES (1,'fizz',95,1);\nINSERT INTO submissions VALUES (2,'buzz',95,2);\nINSERT INTO submissions VALUES (3,'littlemiss',90,3);", output: "fizz|95\nbuzz|95\nlittlemiss|90\n" },
+            { input: "CREATE TABLE submissions(id INT, user VARCHAR(20), score INT, submitted_at INT);\nINSERT INTO submissions VALUES (1,'a',10,1);\nINSERT INTO submissions VALUES (2,'b',20,2);\nINSERT INTO submissions VALUES (3,'a',30,3);", output: "a|30\nb|20\n" },
+          ],
+        },
+      ]
+    }
+    if (level === 2) {
+      return [
+        {
+          id: 3,
+          title: 'Problem 3 (SQL): Littlemiss and the Employee Birthday Mystery',
+          language: 'sql',
+          description: `Littlemiss has a table of employees, each with a birthday.
+She wants to find which month has the most birthdays, because that’s when she should bring more cake.
+
+Table: employees(id, name, birthday)
+
+birthday is a DATE in format YYYY-MM-DD
+
+Output the month number (1–12) and how many birthdays happened in that month.
+
+Expected Output Format
+month | count
+
+Example Data
+1 | jam        | 1999-05-12
+2 | littlemiss | 2000-05-30
+3 | lee        | 2001-01-02
+
+Expected Output
+5|2
+1|1
+
+
+(Any order where most birthdays come first is fine.)`,
+          constraints: 'Table: employees(id INT, name TEXT, birthday DATE YYYY-MM-DD)',
+          sampleInput: "CREATE TABLE employees(id INT, name VARCHAR(20), birthday DATE);\nINSERT INTO employees VALUES (1,'jam','1999-05-12');\nINSERT INTO employees VALUES (2,'littlemiss','2000-05-30');\nINSERT INTO employees VALUES (3,'lee','2001-01-02');",
+          sampleOutput: '5|2\n1|1',
+          hint: 'Extract month using strftime or MONTH; GROUP BY month; COUNT(*); ORDER BY count DESC.',
+          testcases: [
+            { input: "CREATE TABLE employees(id INT, name VARCHAR(20), birthday DATE);\nINSERT INTO employees VALUES (1,'jam','1999-05-12');\nINSERT INTO employees VALUES (2,'littlemiss','2000-05-30');\nINSERT INTO employees VALUES (3,'lee','2001-01-02');", output: "5|2\n1|1\n" },
+            { input: "CREATE TABLE employees(id INT, name VARCHAR(20), birthday DATE);\nINSERT INTO employees VALUES (1,'a','2020-01-01');", output: "1|1\n" },
+          ],
+        },
+        {
+          id: 4,
+          title: 'Problem 4 (SQL): Littlemiss and the “Latest Attempt Wins” Rule',
+          language: 'sql',
+          description: `Every user in the submissions table has multiple attempts.
+Littlemiss decides a new rule:
+
+👉 Only the latest submission (max submitted_at) for each user counts.
+
+Your task:
+For each user, print:
+
+user | score_of_latest_attempt
+
+Table: submissions
+id INT
+user VARCHAR
+score INT
+submitted_at INT
+
+Example Data
+1 | fizz       | 30 | 1
+2 | fizz       | 95 | 5
+3 | buzz       | 10 | 2
+4 | buzz       | 20 | 4
+
+Expected Output
+fizz|95
+buzz|20`,
+          constraints: 'Table: submissions(id INT, user VARCHAR, score INT, submitted_at INT)',
+          sampleInput: "CREATE TABLE submissions(id INT, user VARCHAR(20), score INT, submitted_at INT);\nINSERT INTO submissions VALUES (1,'fizz',30,1);\nINSERT INTO submissions VALUES (2,'fizz',95,5);\nINSERT INTO submissions VALUES (3,'buzz',10,2);\nINSERT INTO submissions VALUES (4,'buzz',20,4);",
+          sampleOutput: 'fizz|95\nbuzz|20',
+          hint: 'Use ROW_NUMBER() over user partition ordered by submitted_at DESC, pick row_number=1; or max by submitted_at then join.',
+          testcases: [
+            { input: "CREATE TABLE submissions(id INT, user VARCHAR(20), score INT, submitted_at INT);\nINSERT INTO submissions VALUES (1,'fizz',30,1);\nINSERT INTO submissions VALUES (2,'fizz',95,5);\nINSERT INTO submissions VALUES (3,'buzz',10,2);\nINSERT INTO submissions VALUES (4,'buzz',20,4);", output: "fizz|95\nbuzz|20\n" },
+            { input: "CREATE TABLE submissions(id INT, user VARCHAR(20), score INT, submitted_at INT);\nINSERT INTO submissions VALUES (1,'a',5,1);\nINSERT INTO submissions VALUES (2,'a',7,2);", output: "a|7\n" },
+          ],
+        },
+      ]
+    }
+    const isBasic = level <= 10
+    if (isBasic) {
+      return [
+        {
+          id: 3,
+          title: `Mock L${level}: littlemiss Basic Order Totals`,
+          language: 'sql',
+          description: `Given orders(id, customer, amount), littlemiss must print total amount per customer, ordered by customer name.\nOutput: customer|total\nProctored SQL: fullscreen.`,
+          constraints: "Table: orders(id INT, customer VARCHAR, amount INT)",
+          sampleInput: "CREATE TABLE orders(id INT, customer VARCHAR(20), amount INT);\nINSERT INTO orders VALUES (1,'a',10);\nINSERT INTO orders VALUES (2,'b',20);\nINSERT INTO orders VALUES (3,'a',5);",
+          sampleOutput: "a|15\nb|20",
+          hint: "GROUP BY customer; SUM(amount); ORDER BY customer.",
+          testcases: [
+            { input: "CREATE TABLE orders(id INT, customer VARCHAR(20), amount INT);\nINSERT INTO orders VALUES (1,'a',10);\nINSERT INTO orders VALUES (2,'b',20);\nINSERT INTO orders VALUES (3,'a',5);", output: "a|15\nb|20\n" },
+            { input: "CREATE TABLE orders(id INT, customer VARCHAR(20), amount INT);\nINSERT INTO orders VALUES (1,'littlemiss',50);", output: "littlemiss|50\n" },
+          ],
+        },
+        {
+          id: 4,
+          title: `Mock L${level}: littlemiss Dept Counts`,
+          language: 'sql',
+          description: `Given employees(id, name, dept), output dept and count of employees per dept, ordered by dept.\nOutput: dept|count\nProctored SQL.`,
+          constraints: "Table: employees(id INT, name VARCHAR, dept VARCHAR)",
+          sampleInput: "CREATE TABLE employees(id INT, name VARCHAR(20), dept VARCHAR(20));\nINSERT INTO employees VALUES (1,'a','eng');\nINSERT INTO employees VALUES (2,'b','eng');\nINSERT INTO employees VALUES (3,'c','ops');",
+          sampleOutput: "eng|2\nops|1",
+          hint: "GROUP BY dept; COUNT(*); ORDER BY dept.",
+          testcases: [
+            { input: "CREATE TABLE employees(id INT, name VARCHAR(20), dept VARCHAR(20));\nINSERT INTO employees VALUES (1,'a','eng');\nINSERT INTO employees VALUES (2,'b','eng');\nINSERT INTO employees VALUES (3,'c','ops');", output: "eng|2\nops|1\n" },
+            { input: "CREATE TABLE employees(id INT, name VARCHAR(20), dept VARCHAR(20));\nINSERT INTO employees VALUES (1,'littlemiss','fun');", output: "fun|1\n" },
+          ],
+        },
+      ]
+    }
+
+    return [
+      {
+        id: 3,
+        title: `Mock L${level}: Dense Rank Leaderboard for littlemiss`,
+        language: 'sql',
+        description: `Given a table submissions(id, user, score, submitted_at), littlemiss must produce a leaderboard ranked by score DESC and submitted_at ASC, using dense ranks.\n\nOutput columns: user|score|rank\nProctored SQL: fullscreen, no paste.`,
+        constraints: "Tables: submissions(id, user, score INT, submitted_at TIMESTAMP)",
+        sampleInput: "CREATE TABLE submissions(id INT, user VARCHAR(20), score INT, submitted_at INT);\nINSERT INTO submissions VALUES (1,'littlemiss',90,1);\nINSERT INTO submissions VALUES (2,'fizz',95,2);\nINSERT INTO submissions VALUES (3,'buzz',95,3);",
+        sampleOutput: "fizz|95|1\nbuzz|95|1\nlittlemiss|90|2",
+        hint: "ORDER BY score DESC, submitted_at ASC; use DENSE_RANK() OVER().",
+        testcases: [
+          { input: "CREATE TABLE submissions(id INT, user VARCHAR(20), score INT, submitted_at INT);\nINSERT INTO submissions VALUES (1,'littlemiss',90,1);\nINSERT INTO submissions VALUES (2,'fizz',95,2);\nINSERT INTO submissions VALUES (3,'buzz',95,3);", output: "fizz|95|1\nbuzz|95|1\nlittlemiss|90|2\n" },
+          { input: "CREATE TABLE submissions(id INT, user VARCHAR(20), score INT, submitted_at INT);\nINSERT INTO submissions VALUES (1,'a',50,5);\nINSERT INTO submissions VALUES (2,'b',40,1);", output: "a|50|1\nb|40|2\n" },
+        ],
+      },
+      {
+        id: 4,
+        title: `Mock L${level}: Department Median Salary for littlemiss`,
+        language: 'sql',
+        description: `For each department in employees(id, name, dept, salary), littlemiss must output dept, median_salary, total_count.\nMedian is the middle value; for even counts, average the two middle salaries.\n\nOutput columns: dept|median|count\nProctored SQL: fullscreen, no paste.`,
+        constraints: "Table: employees(id, name, dept, salary)",
+        sampleInput: "CREATE TABLE employees(id INT, name VARCHAR(20), dept VARCHAR(20), salary INT);\nINSERT INTO employees VALUES (1,'littlemiss','eng',100);\nINSERT INTO employees VALUES (2,'jam','eng',300);\nINSERT INTO employees VALUES (3,'lee','ops',200);",
+        sampleOutput: "eng|200|2\nops|200|1",
+        hint: "ROW_NUMBER and COUNT partitioned by dept; handle odd/even by averaging the middle two when even.",
+        testcases: [
+          { input: "CREATE TABLE employees(id INT, name VARCHAR(20), dept VARCHAR(20), salary INT);\nINSERT INTO employees VALUES (1,'littlemiss','eng',100);\nINSERT INTO employees VALUES (2,'jam','eng',300);\nINSERT INTO employees VALUES (3,'lee','ops',200);", output: "eng|200|2\nops|200|1\n" },
+          { input: "CREATE TABLE employees(id INT, name VARCHAR(20), dept VARCHAR(20), salary INT);\nINSERT INTO employees VALUES (1,'a','eng',10);\nINSERT INTO employees VALUES (2,'b','eng',20);\nINSERT INTO employees VALUES (3,'c','eng',30);\nINSERT INTO employees VALUES (4,'d','eng',40);", output: "eng|25|4\n" },
+        ],
+      },
+    ]
+  }
+
+  const result = {}
+  mockCategoryIds.forEach((id, idx) => {
+    const level = idx + 1
+    const questionsForMock = [
+      ...codingPool(level),
+      ...sqlPool(level),
+    ]
+    result[id] = questionsForMock
+  })
+  return result
+}
+
+// Attach mock tests into existing exports
+Object.assign(questions, buildMockQuestions())

@@ -8,6 +8,8 @@ import Dashboard from './routes/Dashboard'
 import CategoryPage from './routes/CategoryPage'
 import QuestionPage from './routes/QuestionPage'
 import MarkedQuestionsPage from './routes/MarkedQuestionsPage'
+import MockTests from './routes/MockTests'
+import Rewards from './routes/Rewards'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -61,6 +63,14 @@ function App() {
       <Route 
         path="/marked-questions" 
         element={user ? <MarkedQuestionsPage /> : <Navigate to="/login" />} 
+      />
+      <Route 
+        path="/mock-tests" 
+        element={user ? <MockTests /> : <Navigate to="/login" />} 
+      />
+      <Route 
+        path="/rewards" 
+        element={user ? <Rewards /> : <Navigate to="/login" />} 
       />
       <Route path="/" element={<Navigate to={user ? "/dashboard" : "/login"} />} />
     </Routes>
